@@ -1,0 +1,7 @@
+The Server receives these message types.
+
+Type            |   Options
+----------------------------------------------------------
+                |
+Login           |   user, pass
+JoinDefaultChat |   uID

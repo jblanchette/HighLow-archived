@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="./underscore-min.js"></script>
+        <script src="./socket.io/socket.io.js"></script>
+        <script src="./client.js"></script>
+
+        <style type="text/css">
+            #controls {
+                border: 1px solid #333;
+                padding: 10px;
+                min-width: 300px;
+                display: inline-block;
+                margin-right: 20px;
+                vertical-align: top;
+            }
+
+            #messages {
+                display: inline-block;
+                border: 1px solid #333;
+                padding: 8px;
+                font-size: 14px;
+                line-height: 22px;
+                height: 400px;
+                width: 350px;
+                overflow: auto;
+                margin-right: 20px;
+            }
+
+            #status {
+                display: inline-block;
+                border: 1px solid #0000FF;
+                padding: 8px;
+                font-size: 14px;
+                line-height: 22px;
+                height: 400px;
+                width: 350px;
+                overflow: auto;
+            }
+        </style>
+    </head>
+    <body onload="Client.init()">
+        <div>
+            <div id="controls">
+                <h3>Controls</h3>
+                <input type="button" onclick="Client.login()" value="Login">
+                <input type="button" onclick="Client.joinDefaultChat()" value="Join Chat">
+            </div>
+
+            <div id="messages">
+                <h3>Messages</h3>
+
+            </div>
+
+            <div id="status">
+                <h3>Status</h3>
+                Connected: <span id="connected">False</span> <br>
+                Logged In: <span id="logged_in">False</span> <br>
+
+                Chat Status: <br>
+                -Room: <span id="room_name"></span> <br>
+            </div>
+
+        </div>
+    </body>
+</html>

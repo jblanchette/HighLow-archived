@@ -1,0 +1,7 @@
+The Client receives these message types.
+
+Type            |   Options
+----------------------------------------------------------
+                |
+UID             |   uID
+JoinChatRoom    |   RoomID, RoomName, RoomMembers, RoomTopic
