@@ -2,6 +2,47 @@ var jLoginManager = function() {
     this.uIDList = [];
 };
 
+jLoginManager.prototype.login = function ( returnSocket, msg ) {
+
+        var loginResult;
+        var loginUID;
+
+        pg.connect(pgConnectionString, function(err, client, done) {
+            client.query('SELECT * FROM users', function(err, result) {
+
+                if( err ){
+                    return console.log("PG Error in login" , err);
+                }
+
+                loginResult = _.findWhere(result.rows,loginObject);
+
+                if(loginResult !== undefined){
+                    console.log("Calling Create ",LoginManager);
+                    loginUID = LoginManager.create( returnSocket );
+                    console.log("Valid login found! New UID: ", loginUID);
+
+                    var returnObj = {
+                        type: "UID",
+                        uID: loginUID
+                    };
+
+                    returnSocket.send(JSON.stringify(returnObj));
+
+
+                }else{
+                    console.log("Not valid login.");
+                    var returnObj = {
+                        type: "InvalidLogin"
+                    };
+
+                    returnSocket.send(JSON.stringify(returnObj));
+                }
+
+                done();
+            });
+        });
+}
+
 jLoginManager.prototype.create = function ( returnSocket ){
     var tempID = "UID" + Math.floor((Math.random() * 999999) + 1);
 

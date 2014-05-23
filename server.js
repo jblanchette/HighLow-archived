@@ -9,6 +9,7 @@ var wss = new WebSocketServer({port: 8080});
 
 var Server = {
 
+    debug: true,
     authUsers: [],
     chatRooms: [],
     gameLobbies: [],
@@ -19,89 +20,55 @@ var Server = {
         this.chatRooms.push ( new ChatLobby() );
     },
 
-    /**
-     * Takes in a return socket and generates a Unique ID for the connection
-     *
-     * @param {type} returnSocket
-     * @returns {String} ClientUID
-     */
-    store: function( returnSocket ){
-
+    events: {
+        'LOGIN': this.handleLogin,
+        'CHAT':  this.handleChatMsg,
+        'GAME':  this.handleGameMsg
     },
 
-    sendTo: function ( UID, message, flags ){
+    error: function ( e ) {
+        console.log("********* Error **********");
+        console.log(e);
 
+        if(this.debug){
+            debugger;
+        }
     },
 
     handleMessage: function( returnSocket, message, flags ){
         try {
+
             var msgObj = JSON.parse(message);
-            var funcName = "handle" + msgObj.type;
-            if(_.isFunction(this[funcName])){
-                console.log("Performing " + funcName);
-                this['handle' + msgObj.type](returnSocket, msgObj);
+
+            if(_.has(this.events,msgObj.type)){
+
+                /**
+                 * Only the login message needs the returnSocket.
+                 * All other messages require a UID of the client which
+                 * points to the socket instance.
+                 */
+                if(msgObj.type === "LOGIN"){
+                    this.events['LOGIN'](returnSocket, msgObj);
+                }else{
+                    this.events[msgObj.type](msgObj);
+                }
             }
 
         } catch (e){
-            console.log("Syntax Error in message: ", e);
+            this.error(e);
         }
 
     },
 
     handleLogin: function ( returnSocket, msg ){
-        var loginObject = {
-            username: msg.user,
-            password: msg.pass
-        };
-
-        var loginResult;
-        var loginUID;
-
-
-        pg.connect(pgConnectionString, function(err, client, done) {
-            client.query('SELECT * FROM users', function(err, result) {
-
-                if( err ){
-                    return console.log("PG Error in login" , err);
-                }
-
-                loginResult = _.findWhere(result.rows,loginObject);
-
-                if(loginResult !== undefined){
-                    console.log("Calling Create ",LoginManager);
-                    loginUID = LoginManager.create( returnSocket );
-                    console.log("Valid login found! New UID: ", loginUID);
-
-                    var returnObj = {
-                        type: "UID",
-                        uID: loginUID
-                    };
-
-                    returnSocket.send(JSON.stringify(returnObj));
-
-
-                }else{
-                    console.log("Not valid login.");
-                    var returnObj = {
-                        type: "InvalidLogin"
-                    };
-
-                    returnSocket.send(JSON.stringify(returnObj));
-                }
-
-                done();
-            });
-        });
 
     },
 
-    handleJoinDefaultChat: function ( returnSocket, msg ){
-        for( room in this.chatRooms){
-           
-        }
+    handleChatMsg: function ( msg ){
+
     },
 
-    handleGame: function ( returnSocket, msg ){
+    handleGameMsg: function ( msg ){
 
     }
 
