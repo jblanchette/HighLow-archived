@@ -1,0 +1,9 @@
+{
+  "name": "HighLowJack",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "socket.io": "~0.9.17",
+    "underscore": "~1.6.0"
+  }
+}

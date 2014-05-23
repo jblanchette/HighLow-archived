@@ -21,21 +21,17 @@ jLoginManager.prototype.login = function ( returnSocket, msg ) {
                     loginUID = LoginManager.create( returnSocket );
                     console.log("Valid login found! New UID: ", loginUID);
 
-                    var returnObj = {
-                        type: "UID",
-                        uID: loginUID
-                    };
+                    return loginUID;
 
-                    returnSocket.send(JSON.stringify(returnObj));
+
 
 
                 }else{
                     console.log("Not valid login.");
-                    var returnObj = {
-                        type: "InvalidLogin"
-                    };
 
-                    returnSocket.send(JSON.stringify(returnObj));
+                    return false;
+
+                    
                 }
 
                 done();

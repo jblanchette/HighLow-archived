@@ -1,11 +1,10 @@
-var WebSocketServer = require('ws').Server,
+var io = require('socket.io').listen(8080),
     _ = require('underscore'),
     ChatLobby = require('./chatlobby').ChatLobby,
     LoginManager = require('./loginmanager').LoginManager,
     pg = require('pg');
 
 var pgConnectionString = "pg://postgres:hello1@localhost/postgres";
-var wss = new WebSocketServer({port: 8080});
 
 var Server = {
 
@@ -35,9 +34,15 @@ var Server = {
         }
     },
 
-    handleMessage: function( returnSocket, message, flags ){
-        try {
+    handleConnection: function ( socket ) {
+        var _this = this;
+        socket.on('message', function( msg, flags ){
+            _this.handleMessage( socket, msg, flags );
+        });
+    },
 
+    handleMessage: function( returnSocket, data ){
+        try {
             var msgObj = JSON.parse(message);
 
             if(_.has(this.events,msgObj.type)){
@@ -60,8 +65,23 @@ var Server = {
 
     },
 
-    handleLogin: function ( returnSocket, msg ){
+    handleLogin : function(returnSocket, msg) {
+        var result = LoginManager.login(returnSocket, msg);
 
+        if (result === false) {
+            var returnObj = {
+                type : "InvalidLogin"
+            };
+
+            returnSocket.send(JSON.stringify(returnObj));
+        } else {
+            var returnObj = {
+                type : "UID",
+                uID : loginUID
+            };
+
+            returnSocket.send(JSON.stringify(returnObj));
+        }
     },
 
     handleChatMsg: function ( msg ){
@@ -77,10 +97,4 @@ var Server = {
 Server.init();
 
 
-wss.on('connection', function(ws) {
-
-    ws.on('message', function(message,flags) {
-        Server.handleMessage(ws,message,flags);
-    });
-
-});
+io.sockets.on("connection", Server.handleConnection);
