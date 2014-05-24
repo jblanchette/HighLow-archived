@@ -1,136 +1,57 @@
+define(['socketio','underscore'],function(io,_) {
 
-var Client = {
-    debug: true,
-    dElement: null,
-    uID: null,
-    socket: null,
-    socketReady: false,
+    var Client = {
+        debug : true,
+        domElements :
+            ["messages","loginUser","loginPass",
+             "chatInput","chatMessages","chatList"],
+        elements: {},
+        uID : null,
+        socket: null,
 
+        init : function() {
+            console.log("Initalized Client");
+            _this = this;
+            _.map(this.domElements,function( el ){
+                _this.elements[el] = document.getElementById(el);
+                if(_this.elements[el] === undefined){
+                    console.warn("Could not find DOM Element: " + el);
+                }
+            });
 
-    init: function(){
-        console.log("Initalized Client");
-        if(this.debug){
-            this.dElement = document.getElementById("messages");
-        }
-    },
+            this.debugMsg("Started Client");
+        },
 
-    login: function() {
-        console.log("Running login()");
+        /**
+         * Get the DOM Element instance of the given ID.
+         *
+         * @param {String} id
+         * @returns {DOM Element}
+         */
+        getDom: function ( id ){
+            return this.elements[id];
+        },
 
-        if(!this.socketReady){
-            var _this = this;
-            this.debugMsg("Socket not ready, Calling Setup()");
-            this.setup( _this.login );
-            return;
-        }
+        login: function (){
+            var user = this.getDom("loginUser").value;
+            var pass = this.getDom("loginPass").value;
 
-            this.debugMsg("Socket Ready!");
+            console.log("User:" + user + " - pass: " + pass);
+        },
 
-            var msg = {
-                type: "Login",
-                user: "test",
-                pass: "test"
-            };
-            console.log("Sending to socket.")
-            this.socket.send(JSON.stringify(msg));
-
-    },
-
-
-    handleUID: function ( msg ) {
-        console.log("Got UID from server: ", msg.uID);
-        this.uID = msg.uID;
-        this.updateStatus("logged_in","True");
-    },
-
-    handleJoinChatRoom: function( msg ){
-        // ID, Name, Members, Topic
-        console.log("Joining Chat Room: " + msg.RoomName);
-    },
-
-    handleInvalidLogin: function ( msg ){
-        console.log("Invalid Login sent from Server.");
-    },
-
-    joinDefaultChat: function ( msg ){
-        var msg = {
-            type: "JoinDefaultChat",
-            uID: this.uID
-        }
-
-        this.send(JSON.stringify(msg));
-    },
-
-    onOpen: function (callback, e){
-        console.log("Socket.onOpen", arguments);
-
-        if(this.socket.readyState === 1){
-            console.log("calling update status");
-            this.socketReady = true;
-            this.updateStatus("connected", "True");
-
-            if(_.isFunction(callback)){
-                console.log("Running onOpen callback");
-                callback();
+        debugMsg : function(msg) {
+            if (this.debug) {
+                this.getDom("messages").innerHTML += msg + "<br>";
+            }
+        },
+        updateStatus : function(name, value) {
+            var element = document.getElementById(name);
+            if (element) {
+                element.innerHTML = value;
             }
         }
+    };
 
+    return Client;
 
-
-    },
-
-    onMessage : function(e) {
-        console.log("Got Message: ", e);
-
-        var message = e.data;
-
-        if (this.debug) {
-            this.debugMsg(message);
-        }
-
-
-        var msgObj = JSON.parse(message);
-        var funcName = "handle" + msgObj.type;
-
-        if (_.isFunction(this[funcName])) {
-            console.log("Performing " + funcName);
-            this['handle' + msgObj.type](msgObj);
-        }
-
-
-
-    },
-
-    setup: function( callback ){
-        if(this.socket !== null){
-            console.log("Socket already setup");
-            return;
-        }
-        console.log("Calling Setup()");
-        this.socket = new WebSocket("ws://localhost:8080");
-
-        this.socket.onopen = _.bind(this.onOpen, this, callback.bind(this));
-        this.socket.onmessage = this.onMessage.bind(this);
-    },
-
-    send: function ( msg ){
-
-        if(this.socketReady){
-            console.log("Sending msg: ", msg);
-            this.socket.send( msg );
-        }
-    },
-
-    debugMsg: function ( msg ){
-        if(this.debug){
-            this.dElement.innerHTML += msg + "<br>";
-        }
-    },
-
-    updateStatus: function ( name, value ){
-        var element = document.getElementById(name);
-        if(element){
-            element.innerHTML = value;
-        }
-    }
-};
+});

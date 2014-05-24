@@ -9,7 +9,8 @@ and open the template in the editor.
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
-
+        <script type="text/javascript" src='config.js'></script>
+        <script data-main="client.app" src="require.js"></script>
 
         <style type="text/css">
             #controls {
@@ -45,12 +46,14 @@ and open the template in the editor.
             }
         </style>
     </head>
-    <body onload="Client.init()">
+    <body>
         <div>
             <div id="controls">
                 <h3>Controls</h3>
-                <input type="button" onclick="Client.login()" value="Login">
-                <input type="button" onclick="Client.joinDefaultChat()" value="Join Chat">
+                User: <input type="text" id="loginUser"> <br>
+                Pass: <input type="text" id="loginPass"> <br>
+                <input type="button" id="button_login" value="Login">
+                <input type="button" id="button_joinChat" value="Join Chat">
             </div>
 
             <div id="messages">
