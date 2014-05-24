@@ -18,9 +18,9 @@ var Server = {
         this.chatRooms.push(new ChatLobby());
     },
     events : {
-        'LOGIN' : this.handleLogin,
-        'CHAT' : this.handleChatMsg,
-        'GAME' : this.handleGameMsg
+        'LOGIN' : 'handleLogin',
+        'CHAT' :  'handleChatMsg',
+        'GAME' :  'handleGameMsg'
     },
     error : function(e) {
         console.log("********* Error **********");
@@ -30,52 +30,21 @@ var Server = {
             debugger;
         }
     },
+
     handleConnection : function(socket) {
-        var _this = this;
-        socket.on('message', function(msg, flags) {
-            _this.handleMessage(socket, msg, flags);
+        _.each(Server.events, function ( fn, name ){
+           socket.on(name, function( data ) {
+               Server[fn](socket, data);
+           })
         });
     },
-    handleMessage : function(returnSocket, data) {
-        try {
-            var msgObj = JSON.parse(message);
 
-            if (_.has(this.events, msgObj.type)) {
+    handleLogin : function( socket, msg) {
 
-                /**
-                 * Only the login message needs the returnSocket.
-                 * All other messages require a UID of the client which
-                 * points to the socket instance.
-                 */
-                if (msgObj.type === "LOGIN") {
-                    this.events['LOGIN'](returnSocket, msgObj);
-                } else {
-                    this.events[msgObj.type](msgObj);
-                }
-            }
+        console.log("PERFORMING LOGIN", msg);
 
-        } catch (e) {
-            this.error(e);
-        }
+        var result = LoginManager.login( socket, msg);
 
-    },
-    handleLogin : function(returnSocket, msg) {
-        var result = LoginManager.login(returnSocket, msg);
-
-        if (result === false) {
-            var returnObj = {
-                type : "InvalidLogin"
-            };
-
-            returnSocket.send(JSON.stringify(returnObj));
-        } else {
-            var returnObj = {
-                type : "UID",
-                uID : loginUID
-            };
-
-            returnSocket.send(JSON.stringify(returnObj));
-        }
     },
     handleChatMsg : function(msg) {
 

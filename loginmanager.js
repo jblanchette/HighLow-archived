@@ -1,13 +1,19 @@
-    var pg = require("pg");
+    var pg = require("pg"),
+    _ = require("underscore");
+    var pgConnectionString = "pg://postgres:hello1@localhost/postgres";
 
     var jLoginManager = function() {
         this.uIDList = [];
     };
 
-    jLoginManager.prototype.login = function(returnSocket, msg) {
+    jLoginManager.prototype.login = function( socket, msg) {
 
         var loginResult;
-        var loginUID;
+
+        var loginObject = {
+                    username: msg.user,
+                    password: msg.pass
+        };
 
         pg.connect(pgConnectionString, function(err, client, done) {
             client.query('SELECT * FROM users', function(err, result) {
@@ -19,21 +25,11 @@
                 loginResult = _.findWhere(result.rows, loginObject);
 
                 if (loginResult !== undefined) {
-                    console.log("Calling Create ", LoginManager);
-                    loginUID = LoginManager.create(returnSocket);
-                    console.log("Valid login found! New UID: ", loginUID);
+                    console.log("Valid Login!");
 
-                    return loginUID;
-
-
-
-
+                    socket.send("Valid Login!");
                 } else {
-                    console.log("Not valid login.");
-
-                    return false;
-
-
+                    socket.send("Invalid Login!");
                 }
 
                 done();

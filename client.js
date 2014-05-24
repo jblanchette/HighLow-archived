@@ -32,11 +32,37 @@ define(['socketio','underscore'],function(io,_) {
             return this.elements[id];
         },
 
-        login: function (){
-            var user = this.getDom("loginUser").value;
-            var pass = this.getDom("loginPass").value;
+        setup: function( callback ){
+            console.log("Calling setup");
+            this.socket = io.connect("http://localhost:8080");
 
-            console.log("User:" + user + " - pass: " + pass);
+            this.socket.on('message', function(msg, flags) {
+                console.log("Client message:" + msg);
+                _this.handleMessage(msg, flags);
+            });
+
+            this.socket.on('connect', callback);
+        },
+
+        handleMessage: function ( msg, flags ) {
+            this.debugMsg("Got Message: " + msg);
+        },
+
+        login: function (){
+            var _user = this.getDom("loginUser").value;
+            var _pass = this.getDom("loginPass").value;
+            var _this = this;
+
+            console.log("Calling login");
+            this.setup(function(){
+                var LoginObject = {
+                    user: _user,
+                    pass: _pass
+                }
+                console.log("Emit login packet", _this.socket);
+                _this.socket.emit('LOGIN', LoginObject);
+                _this.socket.send("test","test");
+            });
         },
 
         debugMsg : function(msg) {
