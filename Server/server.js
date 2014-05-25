@@ -10,9 +10,8 @@ var Server = {
         console.log("**** STARTING SERVER ****");
 
         ChatManager.setup( io );
-        LoginManager.setup( io );
-
         ChatManager.createRoom();
+        console.log("**** READY ****");
     },
     events : {
         'LOGIN' : 'handleLogin',
@@ -29,12 +28,25 @@ var Server = {
     },
     handleConnection : function(socket) {
         var _this = this;
+
+        socket.on('disconnect', function(){
+            Server.handleDisconnect( socket );
+        });
+
         _.each(Server.events, function(fn, name) {
             socket.on(name, function(data) {
                 Server[fn].apply(_this, [socket, data]);
             })
         });
     },
+
+    handleDisconnect: function ( socket ){
+        console.log("Client Disconnect: ", socket.id);
+
+        var nickname = LoginManager.getNickname( socket.id );
+        ChatManager.userDisconnect( nickname );
+    },
+
     handleLogin : function(socket, msg) {
         //console.log("handle login...");
         LoginManager.handleMessage.apply( LoginManager, [socket, msg] );

@@ -4,16 +4,15 @@ var pgConnectionString = "pg://postgres:hello1@localhost/postgres";
 
 var jLoginManager = function() {
     this.IDList = {};
-    this.Server = null;
-};
-
-jLoginManager.prototype.setup = function ( server ){
-    this.Server = server;
 };
 
 jLoginManager.prototype.handleMessage = function(socket, msg) {
     console.log("Got login message", msg);
     this.login(socket, msg);
+};
+
+jLoginManager.prototype.getNickname = function ( id ){
+    return this.IDList[ id ];
 };
 
 jLoginManager.prototype.login = function(socket, msg) {
