@@ -3,13 +3,13 @@
     var pgConnectionString = "pg://postgres:hello1@localhost/postgres";
 
     var jLoginManager = function() {
-        this.uIDList = [];
+        this.IDList = [];
     };
 
     jLoginManager.prototype.login = function( socket, msg) {
 
         var loginResult;
-
+        var _this = this;
         var loginObject = {
                     username: msg.user,
                     password: msg.pass
@@ -25,11 +25,12 @@
                 loginResult = _.findWhere(result.rows, loginObject);
 
                 if (loginResult !== undefined) {
-                    console.log("Valid Login!");
-
-                    socket.send("Valid Login!");
+                    socket.send("Valid Login! " + socket.id);
+                    socket.emit('LOGIN', {type: "GOOD", id: socket.id});
+                    _this.IDList.push(socket.id);
                 } else {
                     socket.send("Invalid Login!");
+                    socket.emit('LOGIN', {type: "BAD"});
                 }
 
                 done();

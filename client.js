@@ -7,7 +7,13 @@ define(['socketio','underscore'],function(io,_) {
              "chatInput","chatMessages","chatList"],
         elements: {},
         uID : null,
+        emitQueue: [],
         socket: null,
+        events : {
+            'LOGIN' : 'handleLogin',
+            'CHAT' :  'handleChatMsg',
+            'GAME' :  'handleGameMsg'
+        },
 
         init : function() {
             console.log("Initalized Client");
@@ -34,6 +40,7 @@ define(['socketio','underscore'],function(io,_) {
 
         setup: function( callback ){
             console.log("Calling setup");
+            _this = this;
             this.socket = io.connect("http://localhost:8080");
 
             this.socket.on('message', function(msg, flags) {
@@ -41,28 +48,87 @@ define(['socketio','underscore'],function(io,_) {
                 _this.handleMessage(msg, flags);
             });
 
-            this.socket.on('connect', callback);
+            _.each(Client.events, function ( fn, name ){
+                _this.socket.on(name, function( data ) {
+                    Client[fn](data);
+                })
+            });
+
+            this.socket.on('connect', Client.onConnect);
+        },
+
+        queue: function ( emitName, emitObj ){
+
+            this.emitQueue.push({
+                name: emitName,
+                obj: emitObj
+            });
+
+
+            if(this.socket !== null && this.socket.socket.connected){
+                this.runQueue();
+            }
+        },
+
+        runQueue: function(){
+            if(!this.socket.socket.connected){
+                console.warn("Tried to run queue without being connected.");
+                return false;
+            }
+            _.each(this.emitQueue, function ( e ){
+                console.log("Sending message in queue", e);
+                Client.socket.emit(e.name, e.obj);
+            });
+
+            this.emitQueue = [];
+        },
+
+        onConnect: function() {
+            console.log("onConnect called");
+            Client.runQueue();
         },
 
         handleMessage: function ( msg, flags ) {
             this.debugMsg("Got Message: " + msg);
         },
 
+        handleLogin: function ( data ){
+            this.debugMsg("Got Login Data: " + data.type + " : " + data.id);
+            if(data.type === "GOOD"){
+
+                this.debugMsg("Asking server to join chat.");
+                var ChatObject = {
+                    type: "JOIN",
+                    roomName: "ANY"
+                };
+
+                this.socket.emit("CHAT", ChatObject);
+            }else{
+                this.debugMsg("Invalid Login.");
+            }
+        },
+
+        handleChatMsg: function ( data ){
+
+        },
+
+        handleGameMsg: function ( data ){
+
+        },
+
         login: function (){
+            console.log("Starting login()");
             var _user = this.getDom("loginUser").value;
             var _pass = this.getDom("loginPass").value;
-            var _this = this;
 
-            console.log("Calling login");
-            this.setup(function(){
-                var LoginObject = {
+            var LoginObject = {
                     user: _user,
                     pass: _pass
-                }
-                console.log("Emit login packet", _this.socket);
-                _this.socket.emit('LOGIN', LoginObject);
-                _this.socket.send("test","test");
-            });
+            }
+
+            console.log("Queue login packet");
+            this.queue('LOGIN', LoginObject);
+            this.setup();
         },
 
         debugMsg : function(msg) {

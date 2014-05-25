@@ -2,10 +2,7 @@
 var io = require('socket.io').listen(8080),
 _ = require('underscore'),
 ChatLobby = require('./chatlobby').ChatLobby,
-LoginManager = require('./loginmanager').LoginManager,
-pg = require('pg');
-
-var pgConnectionString = "pg://postgres:hello1@localhost/postgres";
+LoginManager = require('./loginmanager').LoginManager;
 
 var Server = {
     debug : true,
@@ -46,10 +43,17 @@ var Server = {
         var result = LoginManager.login( socket, msg);
 
     },
-    handleChatMsg : function(msg) {
-
+    handleChatMsg : function( socket, msg) {
+        switch(msg.type){
+            case "JOIN":
+                if(msg.roomName === "ANY"){
+                    // Join first default chat available
+                    console.log("Joining first avaiable chat for " + socket.id);
+                }
+            break;
+        }
     },
-    handleGameMsg : function(msg) {
+    handleGameMsg : function( socket, msg) {
 
     }
 
