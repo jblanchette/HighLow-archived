@@ -1,62 +1,72 @@
-    var pg = require("pg"),
-    _ = require("underscore");
-    var pgConnectionString = "pg://postgres:hello1@localhost/postgres";
+var pg = require("pg"),
+_ = require("underscore");
+var pgConnectionString = "pg://postgres:hello1@localhost/postgres";
 
-    var jLoginManager = function() {
-        this.IDList = [];
+var jLoginManager = function() {
+    this.IDList = [];
+    this.Server = null;
+};
+
+jLoginManager.prototype.setup = function ( server ){
+    this.Server = server;
+};
+
+jLoginManager.prototype.handleMessage = function(socket, msg) {
+    console.log("Got login message", msg);
+    this.login(socket, msg);
+};
+
+jLoginManager.prototype.login = function(socket, msg) {
+
+    var loginResult;
+    var _this = this;
+    var loginObject = {
+        username : msg.user,
+        password : msg.pass
     };
 
-    jLoginManager.prototype.login = function( socket, msg) {
+    pg.connect(pgConnectionString, function(err, client, done) {
+        client.query('SELECT * FROM users', function(err, result) {
 
-        var loginResult;
-        var _this = this;
-        var loginObject = {
-                    username: msg.user,
-                    password: msg.pass
-        };
+            if (err) {
+                return console.log("PG Error in login", err);
+            }
 
-        pg.connect(pgConnectionString, function(err, client, done) {
-            client.query('SELECT * FROM users', function(err, result) {
+            loginResult = _.findWhere(result.rows, loginObject);
 
-                if (err) {
-                    return console.log("PG Error in login", err);
-                }
+            if (loginResult !== undefined) {
+                socket.send("Valid Login! " + socket.id);
+                socket.emit('LOGIN', {type : "GOOD", id : socket.id});
+                _this.IDList.push(socket.id);
+            } else {
+                socket.send("Invalid Login!");
+                socket.emit('LOGIN', {type : "BAD"});
+            }
 
-                loginResult = _.findWhere(result.rows, loginObject);
-
-                if (loginResult !== undefined) {
-                    socket.send("Valid Login! " + socket.id);
-                    socket.emit('LOGIN', {type: "GOOD", id: socket.id});
-                    _this.IDList.push(socket.id);
-                } else {
-                    socket.send("Invalid Login!");
-                    socket.emit('LOGIN', {type: "BAD"});
-                }
-
-                done();
-            });
+            done();
         });
+    });
+}
+
+jLoginManager.prototype.create = function(returnSocket) {
+    var tempID = "UID" + Math.floor((Math.random() * 999999) + 1);
+
+    while (this.uIDList[tempID] !== undefined) {
+        tempID = "UID" + Math.floor((Math.random() * 999999) + 1);
     }
 
-    jLoginManager.prototype.create = function(returnSocket) {
-        var tempID = "UID" + Math.floor((Math.random() * 999999) + 1);
+    this.uIDList[tempID] = returnSocket;
 
-        while (this.uIDList[tempID] !== undefined) {
-            tempID = "UID" + Math.floor((Math.random() * 999999) + 1);
-        }
+    console.log("Created UID: ", tempID);
+    return tempID;
+};
 
-        this.uIDList[tempID] = returnSocket;
+jLoginManager.prototype.get = function(uID) {
+    return this.uIDList[uID];
+};
 
-        console.log("Created UID: ", tempID);
-        return tempID;
-    };
+jLoginManager.prototype.remove = function(uID) {
+    delete this.uIDList[uID];
+};
 
-    jLoginManager.prototype.get = function(uID) {
-        return this.uIDList[uID];
-    };
-
-    jLoginManager.prototype.remove = function(uID) {
-        delete this.uIDList[uID];
-    };
-
-    exports.LoginManager = new jLoginManager();
+exports.LoginManager = new jLoginManager();

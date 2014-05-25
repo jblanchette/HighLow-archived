@@ -1,28 +1,31 @@
 
-    var jChatLobby = function( roomName, owner ) {
+var jChatLobby = function(roomName, owner) {
 
-        if(arguments.length === 0){
-            this.roomName = "Room #" + Math.floor((Math.random() * 10000) + 1);
-            this.owner = -1;
-        }else{
-            this.roomName = roomName;
-            this.owner = owner;
-        }
+    if (arguments.length === 0) {
+        this.roomName = "Room #" + Math.floor((Math.random() * 10000) + 1);
+        this.owner = -1;
+    } else {
+        this.roomName = roomName;
+        this.owner = owner;
+    }
 
-        this.members = [];
+    this.members = [];
 
-    };
+};
 
-    jChatLobby.prototype.addMember = function(uID, name) {
-        this.members[uID] = name;
-    };
+var jc = jChatLobby.prototype;
 
-    jChatLobby.prototype.removeMember = function(uID) {
-        delete this.members[uID];
-    };
+jc.isFull = function(){
+    console.log("******Room " + this.roomName + " full: " + (this.members.length < 249));
+    return !(this.members.length < 249);
+};
 
-    jChatLobby.prototype.broadcast = function(uID) {
+jc.addMember = function(name) {
+    this.members.push(name);
+};
 
-    };
+jc.removeMember = function(name) {
+    this.members = _.without(this.members, name);
+};
 
-    exports.ChatLobby = jChatLobby;
+exports.ChatLobby = jChatLobby;

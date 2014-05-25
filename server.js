@@ -1,23 +1,23 @@
 
-var io = require('socket.io').listen(8080),
+var io = require('socket.io').listen(8080, {log: false}),
 _ = require('underscore'),
-ChatLobby = require('./chatlobby').ChatLobby,
+ChatManager = require('./chatmanager').ChatManager,
 LoginManager = require('./loginmanager').LoginManager;
 
 var Server = {
     debug : true,
-    authUsers : [],
-    chatRooms : [],
-    gameLobbies : [],
     init : function() {
         console.log("**** STARTING SERVER ****");
-        // Start with one chat lobby
-        this.chatRooms.push(new ChatLobby());
+
+        ChatManager.setup( io );
+        LoginManager.setup( io );
+
+        ChatManager.createRoom();
     },
     events : {
         'LOGIN' : 'handleLogin',
-        'CHAT' :  'handleChatMsg',
-        'GAME' :  'handleGameMsg'
+        'CHAT' : 'handleChatMsg',
+        'GAME' : 'handleGameMsg'
     },
     error : function(e) {
         console.log("********* Error **********");
@@ -27,40 +27,36 @@ var Server = {
             debugger;
         }
     },
-
     handleConnection : function(socket) {
-        _.each(Server.events, function ( fn, name ){
-           socket.on(name, function( data ) {
-               Server[fn](socket, data);
-           })
+        var _this = this;
+        _.each(Server.events, function(fn, name) {
+            socket.on(name, function(data) {
+                Server[fn].apply(_this, [socket, data]);
+            })
         });
     },
-
-    handleLogin : function( socket, msg) {
-
-        console.log("PERFORMING LOGIN", msg);
-
-        var result = LoginManager.login( socket, msg);
+    handleLogin : function(socket, msg) {
+        console.log("handle login...");
+        LoginManager.login(socket, msg);
 
     },
-    handleChatMsg : function( socket, msg) {
-        switch(msg.type){
+    handleChatMsg : function(socket, msg) {
+        var _this = this;
+        switch (msg.type) {
             case "JOIN":
-                if(msg.roomName === "ANY"){
-                    // Join first default chat available
-                    console.log("Joining first avaiable chat for " + socket.id);
+                if (msg.roomName === "ANY") {
+                    console.log("running ChatManager.joinDefault");
+                    ChatManager.joinDefault.apply(ChatManager, [socket, socket.id]);
                 }
-            break;
+                break;
         }
     },
-    handleGameMsg : function( socket, msg) {
+    handleGameMsg : function(socket, msg) {
 
     }
 
 };
 
 Server.init();
-
-
 io.sockets.on("connection", Server.handleConnection);
 

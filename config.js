@@ -1,6 +1,8 @@
 var require = {
     paths : {
         "socketio" : 'bower_components/socket.io-client/dist/socket.io',
-        "underscore": 'bower_components/underscore/underscore'
+        "underscore": 'bower_components/underscore/underscore',
+        "chatlobby": 'client.chatlobby',
+        "chatmanager": 'client.chatmanager'
     }
 };
