@@ -3,16 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/chatlobby.js</file>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/client.app.js</file>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/server.js</file>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/client.chatlobby.js</file>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/chatmanager.js</file>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/loginmanager.js</file>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/client.js</file>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/config.js</file>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/testclient.html</file>
-            <file>file:/C:/Users/Jeef/Code/HighLowServer/client.chatmanager.js</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Client/client.js</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Server/chatlobby.js</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Server/server.js</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Server/chatmanager.js</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Client/testclient.html</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Server/loginmanager.js</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Client/chat.manager.js</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/README.md</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Client/chat.lobby.js</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Client/README.md</file>
+            <file>file:/C:/Users/Jeef/Code/HighLowServer/Server/README.md</file>
         </group>
     </open-files>
 </project-private>

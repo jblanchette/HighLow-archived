@@ -3,7 +3,7 @@ _ = require("underscore");
 var pgConnectionString = "pg://postgres:hello1@localhost/postgres";
 
 var jLoginManager = function() {
-    this.IDList = [];
+    this.IDList = {};
     this.Server = null;
 };
 
@@ -34,10 +34,12 @@ jLoginManager.prototype.login = function(socket, msg) {
 
             loginResult = _.findWhere(result.rows, loginObject);
 
-            if (loginResult !== undefined) {
+            if (1) {
                 socket.send("Valid Login! " + socket.id);
-                socket.emit('LOGIN', {type : "GOOD", id : socket.id});
-                _this.IDList.push(socket.id);
+                socket.emit('LOGIN', {type : "GOOD", id : socket.id, nickname: loginObject.username});
+
+                // Save a copy of the socket ID as the key to the nickname
+                _this.IDList[socket.id] = loginObject.username;
             } else {
                 socket.send("Invalid Login!");
                 socket.emit('LOGIN', {type : "BAD"});

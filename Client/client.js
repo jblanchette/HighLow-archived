@@ -7,7 +7,7 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
             "chatInput", "chatMessages", "chatList",
             "chatHeader"],
         elements : {},
-        uID : null,
+        nickname: "",
         emitQueue : [],
         socket : null,
         events : {
@@ -28,6 +28,8 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
             ChatManager.setup( this );
 
             this.debugMsg("Started Client");
+
+            this.getDom("loginUser").value = "User#" + Math.floor((Math.random() * 10000) + 1);
         },
         /**
          * Get the DOM Element instance of the given ID.
@@ -81,13 +83,16 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
         },
 
         handleLogin : function(data) {
-            this.debugMsg("Got Login Data: " + data.type + " : " + data.id);
+
             if (data.type === "GOOD") {
+                this.nickname = data.nickname;
 
                 this.debugMsg("Asking server to join chat.");
+
                 var ChatObject = {
                     type : "JOIN",
-                    roomName : "ANY"
+                    roomName : "ANY",
+                    nickname: this.nickname
                 };
 
                 this.socket.emit("CHAT", ChatObject);
@@ -104,6 +109,7 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
         handleGameMsg : function(msg) {
 
         },
+
         login : function() {
             console.log("Starting login()");
             var _user = this.getDom("loginUser").value;
@@ -114,10 +120,29 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
                 pass : _pass
             }
 
-            console.log("Queue login packet");
             this.queue('LOGIN', LoginObject);
             this.setup();
         },
+
+        sendMessage: function(){
+
+            if(this.isConnected()){
+                var msg = this.nickname + ": " + this.getDom("chatInput").value;
+                ChatManager.sendMessage.apply(ChatManager, [msg]);
+            }else{
+                this.debugMsg("Error, you must login first.");
+            }
+
+        },
+
+        isConnected: function(){
+            if(this.socket === null){
+                return false;
+            }
+
+            return this.socket.socket.connected;
+        },
+
         debugMsg : function(msg) {
             if (this.debug) {
                 this.getDom("messages").innerHTML += msg + "<br>";

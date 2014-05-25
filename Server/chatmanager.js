@@ -1,4 +1,5 @@
-var ChatLobby = require("./chatlobby").ChatLobby;
+var ChatLobby = require("./chatlobby").ChatLobby,
+    _ = require("underscore");
 
 var jChatManager = function() {
     this.io = null;
@@ -14,11 +15,25 @@ jChatManager.prototype.handleMessage = function(socket, msg) {
             case "JOIN":
                 if (msg.roomName === "ANY") {
                     console.log("running ChatManager.joinDefault");
-                    this.joinDefault(socket, socket.id);
+                    this.joinDefault(socket, msg.nickname);
                 }
+                break;
+            case "UPDATE":
+                    this.update( msg );
                 break;
     }
 };
+
+jChatManager.prototype.update = function(updateObj) {
+
+        console.log("Chat Update: ", updateObj);
+
+        if(_.has(updateObj, "roomName")){
+            console.log("Sending update to room: " + updateObj.roomName);
+            this.sendTo(updateObj.roomName, updateObj);
+        }
+
+    };
 
 jChatManager.prototype.createRoom = function(name, owner) {
     var Lobby;
@@ -61,10 +76,10 @@ jChatManager.prototype.joinDefault = function( socket, name ){
 
     var ChatObj = {
         type: "UPDATE",
-        NewMember: socket.id
+        NewMember: name
     };
     this.sendTo(Lobby.roomName, ChatObj);
-    
+
     socket.emit("CHAT",ClientObj);
     socket.join(Lobby.roomName);
 

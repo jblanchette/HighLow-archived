@@ -7,5 +7,10 @@ requirejs(['socketio', 'underscore','client','chatlobby'],
         login.addEventListener("click", function(){
             Client.login();
         });
+
+        var send = document.getElementById("button_sendChat");
+        send.addEventListener("click", function(){
+            Client.sendMessage();
+        });
     }
 );

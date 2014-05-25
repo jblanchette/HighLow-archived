@@ -36,12 +36,12 @@ var Server = {
         });
     },
     handleLogin : function(socket, msg) {
-        console.log("handle login...");
+        //console.log("handle login...");
         LoginManager.handleMessage.apply( LoginManager, [socket, msg] );
 
     },
     handleChatMsg : function(socket, msg) {
-        console.log("handle Chat Msg", msg);
+        //console.log("handle Chat Msg", msg);
         ChatManager.handleMessage.apply( ChatManager, [socket, msg] );
 
     },

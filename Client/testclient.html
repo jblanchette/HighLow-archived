@@ -77,7 +77,7 @@ and open the template in the editor.
                 border: 1px solid #00FF00;
             }
 
-            #chatList li,ul {
+            li,ul {
                 margin: 0;
                 padding: 0;
             }
@@ -86,6 +86,31 @@ and open the template in the editor.
                 display: block;
                 height: 25px;
                 list-style: none;
+            }
+
+            #chatMessages li {
+                display: block;
+                height: 25px;
+                list-style: none;
+            }
+
+            #chatInputHolder {
+                margin-top: 6px;
+            }
+
+            #chatInputHolder input[type="text"] {
+                font: 16px Verdana;
+                width: 573px;
+                height: 20px;
+                padding: 3px;
+                margin-right: 20px;
+            }
+
+            #chatInputHolder input[type="button"] {
+                font: 18px Verdana;
+                width: 275px;
+                height: 32px;
+                padding: 2px;
             }
         </style>
     </head>
@@ -121,7 +146,7 @@ and open the template in the editor.
             <div id="chatList"></div>
 
             <div id="chatInputHolder">
-                <input type="text" value="Enter Message..." id="chatInput">
+                <input type="text" value="Enter Message..." onclick="this.value=''" id="chatInput">
                 <input type="button" value="Send" id="button_sendChat">
             </div>
         </div>
