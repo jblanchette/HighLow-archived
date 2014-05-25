@@ -9,6 +9,17 @@ jChatManager.prototype.setup = function ( io  ){
     this.io = io;
 };
 
+jChatManager.prototype.handleMessage = function(socket, msg) {
+    switch (msg.type) {
+            case "JOIN":
+                if (msg.roomName === "ANY") {
+                    console.log("running ChatManager.joinDefault");
+                    this.joinDefault(socket, socket.id);
+                }
+                break;
+    }
+};
+
 jChatManager.prototype.createRoom = function(name, owner) {
     var Lobby;
 

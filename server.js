@@ -37,19 +37,13 @@ var Server = {
     },
     handleLogin : function(socket, msg) {
         console.log("handle login...");
-        LoginManager.login(socket, msg);
+        LoginManager.handleMessage.apply( LoginManager, [socket, msg] );
 
     },
     handleChatMsg : function(socket, msg) {
-        var _this = this;
-        switch (msg.type) {
-            case "JOIN":
-                if (msg.roomName === "ANY") {
-                    console.log("running ChatManager.joinDefault");
-                    ChatManager.joinDefault.apply(ChatManager, [socket, socket.id]);
-                }
-                break;
-        }
+        console.log("handle Chat Msg", msg);
+        ChatManager.handleMessage.apply( ChatManager, [socket, msg] );
+
     },
     handleGameMsg : function(socket, msg) {
 
