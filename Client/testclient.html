@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>HL Client</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
         <script type="text/javascript" src='config.js'></script>
@@ -17,37 +17,80 @@ and open the template in the editor.
                 border: 1px solid #333;
                 padding: 10px;
                 min-width: 300px;
-                display: inline-block;
-                margin-right: 20px;
+                margin-bottom: 10px;
                 vertical-align: top;
             }
 
             #messages {
-                display: inline-block;
                 border: 1px solid #333;
                 padding: 8px;
                 font-size: 14px;
                 line-height: 22px;
-                height: 400px;
+                height: 200px;
                 width: 350px;
                 overflow: auto;
-                margin-right: 20px;
+                margin-bottom: 8px;
             }
 
             #status {
-                display: inline-block;
                 border: 1px solid #0000FF;
                 padding: 8px;
                 font-size: 14px;
                 line-height: 22px;
-                height: 400px;
+                height: 200px;
                 width: 350px;
                 overflow: auto;
+            }
+
+            #devtools {
+                display: inline-block;
+                margin-right: 8px;
+            }
+
+            #lobby {
+                vertical-align: top;
+                border: 1px solid #333;
+                width: 900px;
+                min-height: 500px;
+                display: inline-block;
+                padding: 10px;
+            }
+
+            #chatMessages {
+                vertical-align: top;
+                min-height: 480px;
+                width: 565px;
+                border: 1px solid #CCC;
+                padding: 8px;
+                font: 16px Verdana;
+                line-height: 23px;
+                display: inline-block;
+                margin-right: 10px;
+            }
+
+            #chatList {
+                vertical-align: top;
+                display: inline-block;
+                width: 275px;
+                padding: 8px;
+                min-height: 480px;
+                border: 1px solid #00FF00;
+            }
+
+            #chatList li,ul {
+                margin: 0;
+                padding: 0;
+            }
+
+            #chatList li {
+                display: block;
+                height: 25px;
+                list-style: none;
             }
         </style>
     </head>
     <body>
-        <div>
+        <div id="devtools">
             <div id="controls">
                 <h3>Controls</h3>
                 User: <input type="text" id="loginUser" value="test"> <br>
@@ -70,6 +113,17 @@ and open the template in the editor.
                 -Room: <span id="room_name"></span> <br>
             </div>
 
+        </div>
+
+        <div id="lobby">
+            <div id="chatHeader"><h4>Lobby</h4></div>
+            <div id="chatMessages"></div>
+            <div id="chatList"></div>
+
+            <div id="chatInputHolder">
+                <input type="text" value="Enter Message..." id="chatInput">
+                <input type="button" value="Send" id="button_sendChat">
+            </div>
         </div>
     </body>
 </html>

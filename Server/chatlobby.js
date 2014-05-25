@@ -16,7 +16,6 @@ var jChatLobby = function(roomName, owner) {
 var jc = jChatLobby.prototype;
 
 jc.isFull = function(){
-    console.log("******Room " + this.roomName + " full: " + (this.members.length < 249));
     return !(this.members.length < 249);
 };
 

@@ -34,12 +34,11 @@ jChatManager.prototype.createRoom = function(name, owner) {
 };
 
 jChatManager.prototype.joinDefault = function( socket, name ){
-    console.log("Rooms: ", this.rooms);
+
     var foundRoom = false;
     var Lobby;
 
     for(room in this.rooms){
-        console.log("Checking room: " + room);
         if(this.rooms[room].owner === -1 && !this.rooms[room].isFull()){
             Lobby = this.rooms[room];
             Lobby.addMember(name);
@@ -55,14 +54,20 @@ jChatManager.prototype.joinDefault = function( socket, name ){
         this.rooms.push(Lobby);
     }
 
-    console.log("Returning lobby name for server emit: " + Lobby.roomName);
-    var ChatObj = {
+    var ClientObj = {
         type: "JOIN",
         room: JSON.stringify(Lobby)
     };
 
-    socket.emit("CHAT", ChatObj);
+    var ChatObj = {
+        type: "UPDATE",
+        NewMember: socket.id
+    };
     this.sendTo(Lobby.roomName, ChatObj);
+    
+    socket.emit("CHAT",ClientObj);
+    socket.join(Lobby.roomName);
+
 
 };
 

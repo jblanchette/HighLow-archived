@@ -4,7 +4,8 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
         debug : true,
         domElements :
         ["messages", "loginUser", "loginPass",
-            "chatInput", "chatMessages", "chatList"],
+            "chatInput", "chatMessages", "chatList",
+            "chatHeader"],
         elements : {},
         uID : null,
         emitQueue : [],
@@ -42,11 +43,6 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
             _this = this;
             this.socket = io.connect("http://localhost:8080");
 
-            this.socket.on('message', function(msg, flags) {
-                console.log("Client message:" + msg);
-                _this.handleMessage(msg, flags);
-            });
-
             _.each(Client.events, function(fn, name) {
                 _this.socket.on(name, function(data) {
                     Client[fn].apply(_this, [data]);
@@ -83,9 +79,7 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
             console.log("onConnect called");
             Client.runQueue();
         },
-        handleMessage : function(msg, flags) {
-            this.debugMsg("Got Message: " + msg);
-        },
+
         handleLogin : function(data) {
             this.debugMsg("Got Login Data: " + data.type + " : " + data.id);
             if (data.type === "GOOD") {
@@ -101,13 +95,12 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
                 this.debugMsg("Invalid Login.");
             }
         },
+
         handleChatMsg : function(msg) {
-            switch (msg.type) {
-                case "JOIN":
-                    ChatManager.joinLobby(msg);
-                    break;
-            }
+            console.log("Chat Mngr: " , ChatManager);
+            ChatManager.handleMessage.apply(ChatManager, [msg]);
         },
+
         handleGameMsg : function(msg) {
 
         },
