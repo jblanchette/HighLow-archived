@@ -2,20 +2,39 @@ var pg = require("pg"),
 _ = require("underscore");
 var pgConnectionString = "pg://postgres:hello1@localhost/postgres";
 
+var _Server = require("./server");
+
+/**
+ * The LoginManager should validate and store the information for each client.
+ *
+ * Each client should have:
+ *  - socketID from socket.io generation
+ *  - nickname from registered user database
+ *  - chatRoomList list of chat room names (@TODO: replace with ID's)
+ *  - @TODO: some game information
+ * @returns {jLoginManager}
+ */
 var jLoginManager = function() {
     this.IDList = {};
+    this.Server = null;
 };
 
-jLoginManager.prototype.handleMessage = function(socket, msg) {
+var jp = jLoginManager.prototype;
+
+jp.setup = function ( server ){
+    this.Server = server;
+};
+
+jp.handleMessage = function(socket, msg) {
     console.log("Got login message", msg);
     this.login(socket, msg);
 };
 
-jLoginManager.prototype.getNickname = function ( id ){
+jp.getNickname = function ( id ){
     return this.IDList[ id ];
 };
 
-jLoginManager.prototype.login = function(socket, msg) {
+jp.login = function(socket, msg) {
 
     var loginResult;
     var _this = this;
@@ -49,7 +68,7 @@ jLoginManager.prototype.login = function(socket, msg) {
     });
 }
 
-jLoginManager.prototype.create = function(returnSocket) {
+jp.create = function(returnSocket) {
     var tempID = "UID" + Math.floor((Math.random() * 999999) + 1);
 
     while (this.uIDList[tempID] !== undefined) {
@@ -62,11 +81,11 @@ jLoginManager.prototype.create = function(returnSocket) {
     return tempID;
 };
 
-jLoginManager.prototype.get = function(uID) {
+jp.get = function(uID) {
     return this.uIDList[uID];
 };
 
-jLoginManager.prototype.remove = function(uID) {
+jp.remove = function(uID) {
     delete this.uIDList[uID];
 };
 

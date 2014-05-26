@@ -8,8 +8,8 @@ var Server = {
     debug : true,
     init : function() {
         console.log("**** STARTING SERVER ****");
-
-        ChatManager.setup( io );
+        LoginManager.setup( Server );
+        ChatManager.setup( Server );
         ChatManager.createRoom();
         console.log("**** READY ****");
     },
@@ -26,6 +26,21 @@ var Server = {
             debugger;
         }
     },
+
+    get: function( moduleName ){
+        switch( moduleName ){
+            case "LoginManager":
+                return LoginManager;
+                break;
+            case "ChatManager":
+                return ChatManager;
+                break;
+            case "IO":
+                return io;
+                break;
+        }
+    },
+
     handleConnection : function(socket) {
         var _this = this;
 
@@ -41,10 +56,12 @@ var Server = {
     },
 
     handleDisconnect: function ( socket ){
-        console.log("Client Disconnect: ", socket.id);
-
         var nickname = LoginManager.getNickname( socket.id );
-        ChatManager.userDisconnect( nickname );
+        var _this = this;
+
+        console.log("Client Disconnect: ", socket.id, nickname);
+
+        ChatManager.userDisconnect( socket.id, _this.testFunc );
     },
 
     handleLogin : function(socket, msg) {

@@ -2,15 +2,17 @@ var ChatLobby = require("./chatlobby").ChatLobby,
     _ = require("underscore");
 
 var jChatManager = function() {
-    this.io = null;
+    this.Server;
     this.rooms = [];
 };
 
-jChatManager.prototype.setup = function ( io  ){
-    this.io = io;
+var jp = jChatManager.prototype;
+
+jp.setup = function ( server ){
+    this.Server = server;
 };
 
-jChatManager.prototype.handleMessage = function(socket, msg) {
+jp.handleMessage = function(socket, msg) {
     switch (msg.type) {
             case "JOIN":
                 if (msg.roomName === "ANY") {
@@ -24,7 +26,17 @@ jChatManager.prototype.handleMessage = function(socket, msg) {
     }
 };
 
-jChatManager.prototype.update = function(updateObj) {
+/**
+ *  Pass the socketID from socket.io for hash access to them in the room
+ */
+jp.userDisconnect = function( socketID, _io ){
+    var LM = this.Server.get("LoginManager");
+    console.log("Disc test", LM);
+    console.log("Nick: ", LM.getNickname(socketID));
+};
+
+
+jp.update = function(updateObj) {
 
         console.log("Chat Update: ", updateObj);
 
@@ -35,7 +47,7 @@ jChatManager.prototype.update = function(updateObj) {
 
     };
 
-jChatManager.prototype.createRoom = function(name, owner) {
+jp.createRoom = function(name, owner) {
     var Lobby;
 
     if (arguments.length === 0) {
@@ -48,7 +60,7 @@ jChatManager.prototype.createRoom = function(name, owner) {
     this.rooms.push(Lobby);
 };
 
-jChatManager.prototype.joinDefault = function( socket, name ){
+jp.joinDefault = function( socket, name ){
 
     var foundRoom = false;
     var Lobby;
@@ -86,14 +98,14 @@ jChatManager.prototype.joinDefault = function( socket, name ){
 
 };
 
-jChatManager.prototype.remove = function(uID) {
+jp.remove = function(uID) {
     delete this.members[uID];
 };
 
-jChatManager.prototype.sendTo = function( room, msg ) {
+jp.sendTo = function( room, msg ) {
     console.log("Sending Chat emit to " + room);
     console.log(msg);
-    this.io.sockets.to( room ).emit("CHAT", msg);
+    this.Server.get("IO").sockets.to( room ).emit("CHAT", msg);
 };
 
 exports.ChatManager = new jChatManager();
