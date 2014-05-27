@@ -42,8 +42,9 @@ jp.userDisconnect = function( nClient ){
             RemoveMember: nClient.nickname
         };
         console.log("Telling Room " + roomID + " That he disc");
-        _this.sendTo( roomID, JSON.stringify(DiscObj) );
         _this.removeUserFromRoom( roomID );
+        _this.sendTo( roomID, JSON.stringify(DiscObj) );
+
     });
 
 };

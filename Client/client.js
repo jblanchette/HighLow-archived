@@ -43,7 +43,7 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
         setup : function(callback) {
             console.log("Calling setup");
             _this = this;
-            this.socket = io.connect("http://localhost:8080");
+            this.socket = io.connect("http://76.127.128.136:8080");
 
             _.each(Client.events, function(fn, name) {
                 _this.socket.on(name, function(data) {
