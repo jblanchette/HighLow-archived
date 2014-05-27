@@ -27,7 +27,11 @@ jc.addMember = function( socketID, nickname ) {
 };
 
 jc.removeMember = function(id) {
-    delete this.members[id];
+    if(_.keys(this.members).length === 1){
+        this.members = {};
+    }else{
+        delete this.members[id];
+    }
 };
 
 exports.ChatLobby = jChatLobby;

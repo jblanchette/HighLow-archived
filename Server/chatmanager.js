@@ -42,18 +42,21 @@ jp.userDisconnect = function( nClient ){
             RemoveMember: nClient.nickname
         };
         console.log("Telling Room " + roomID + " That he disc");
-        _this.removeUserFromRoom( roomID );
+        _this.removeUserFromRoom( roomID, nClient.socketID );
         _this.sendTo( roomID, JSON.stringify(DiscObj) );
 
     });
 
 };
 
-jp.removeUserFromRoom = function( id ){
-    var room = this.rooms[id];
+jp.removeUserFromRoom = function( roomID, clientID ){
+    var room = this.rooms[roomID];
+    var _this = this;
     if(room !== undefined){
-        console.log("Remove " + id + " From " + room.roomName);
-        room.removeMember( id );
+        console.log("Room before: ", this.rooms[roomID].members);
+        room.removeMember( clientID );
+        console.log("Room after: ", this.rooms[roomID].members);
+        //this.rooms[roomID] = room;
     }
 };
 
@@ -62,7 +65,6 @@ jp.update = function(updateObj) {
         console.log("Chat Update: ", updateObj);
 
         if(_.has(updateObj, "roomName")){
-            console.log("Sending update to room: " + updateObj.roomName);
             this.sendTo(updateObj.roomName, updateObj);
         }
 
@@ -109,9 +111,7 @@ jp.joinDefault = function( socket ){
 
     // See if there is an available default room, if not create one.
     var roomTest = _.find(this.rooms, function( room ){
-        console.log("**  TEST: ", room);
         if( room.owner === -1 && !room.isFull() ){
-            console.log("*** FOUND VALID ROOM");
 
             Lobby = room;
             Lobby.addMember( uClient.socketID, uClient.nickname );
@@ -123,7 +123,6 @@ jp.joinDefault = function( socket ){
 
     if(roomTest === undefined){
         // User can't fit in any existing global rooms, make a new one
-        console.log("*** MADE NEW CHAT ROOM ****");
         Lobby = this.createRoom();
         Lobby.addMember( uClient.socketID, uClient.nickname );
     }
@@ -156,8 +155,7 @@ jp.joinDefault = function( socket ){
 };
 
 jp.sendTo = function( roomID , msg ) {
-    console.log("Sending Chat emit to " + roomID);
-    console.log(msg);
+    console.log("Sending Chat emit", msg);
     this.Server.get("IO").sockets.to( roomID ).emit("CHAT", msg);
 };
 
