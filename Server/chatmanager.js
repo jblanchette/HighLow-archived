@@ -109,6 +109,11 @@ jp.joinDefault = function( socket ){
     var roomTest;
     var Lobby;
 
+    if(_.keys(uClient.roomList).length !== 0){
+        console.log("User already in chat.  Don't need to run.");
+        return;
+    }
+
     // See if there is an available default room, if not create one.
     var roomTest = _.find(this.rooms, function( room ){
         if( room.owner === -1 && !room.isFull() ){

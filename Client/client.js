@@ -53,6 +53,11 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
 
             this.socket.on('connect', Client.onConnect);
         },
+
+        clearQueue: function(){
+            this.emitQueue = {};
+        },
+
         queue : function(emitName, emitObj) {
 
             this.emitQueue.push({
@@ -119,6 +124,7 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
                 pass : _pass
             }
 
+            this.clearQueue();
             this.queue('LOGIN', LoginObject);
             this.setup();
         },
