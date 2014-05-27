@@ -59,10 +59,17 @@ define(['underscore', 'chatlobby'], function(_, ChatLobby) {
             this.Lobby.members.sort();
         }
 
+        if(_.has(updateObj, "RemoveMember")){
+            console.log("removeing member:" + updateObj.RemoveMember);
+            this.Lobby.members = _.without(this.Lobby.members, updateObj.RemoveMember);
+        }
+
         if(_.has(updateObj, "NewMessage")){
             console.log("New Chat Message: ", updateObj.NewMessage);
             this.Lobby.messages.push(updateObj.NewMessage);
         }
+
+
 
         this.render();
 

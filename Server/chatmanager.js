@@ -29,15 +29,32 @@ jp.handleMessage = function(socket, msg) {
 /**
  *  Pass the socketID from socket.io for hash access to them in the room
  */
-jp.userDisconnect = function( socketID, _io ){
-    var LM = this.Server.get("LoginManager");
+jp.userDisconnect = function( nClient ){
+    var _this = this;
+    var DiscObj;
 
-    var uClient = LM.get( socketID );
+    console.log("Client was in rooms: ", nClient.roomList);
 
-    console.log("Client was in rooms: ", uClient.roomList);
+    _.each( nClient.roomList, function(roomName, roomID){
+        DiscObj = {
+            type: "UPDATE",
+            roomID: roomID,
+            RemoveMember: nClient.nickname
+        };
+        console.log("Telling Room " + roomID + " That he disc");
+        _this.sendTo( roomID, JSON.stringify(DiscObj) );
+        _this.removeUserFromRoom( roomID );
+    });
 
 };
 
+jp.removeUserFromRoom = function( id ){
+    var room = this.rooms[id];
+    if(room !== undefined){
+        console.log("Remove " + id + " From " + room.roomName);
+        room.removeMember( id );
+    }
+};
 
 jp.update = function(updateObj) {
 
@@ -125,10 +142,11 @@ jp.joinDefault = function( socket ){
 
     var ChatObj = {
         type: "UPDATE",
+        roomID: Lobby.id,
         NewMember: uClient.nickname
     };
 
-    this.sendTo(Lobby.roomName, ChatObj);
+    this.sendTo(Lobby.id, ChatObj);
 
     socket.emit("CHAT",ClientObj);
     socket.join(Lobby.roomName);
@@ -136,14 +154,10 @@ jp.joinDefault = function( socket ){
 
 };
 
-jp.remove = function(uID) {
-    delete this.members[uID];
-};
-
-jp.sendTo = function( room, msg ) {
-    console.log("Sending Chat emit to " + room);
+jp.sendTo = function( roomID , msg ) {
+    console.log("Sending Chat emit to " + roomID);
     console.log(msg);
-    this.Server.get("IO").sockets.to( room ).emit("CHAT", msg);
+    this.Server.get("IO").sockets.to( roomID ).emit("CHAT", msg);
 };
 
 exports.ChatManager = new jChatManager();

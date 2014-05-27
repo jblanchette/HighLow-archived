@@ -59,8 +59,7 @@ var Server = {
         var nClient = LoginManager.get(socket.id);
 
         if(nClient !== undefined){
-            //ChatManager.userDisconnect( socket.id, _this.testFunc );
-            console.log("Client Disc:", nClient);
+            ChatManager.userDisconnect( nClient );
         }
     },
 

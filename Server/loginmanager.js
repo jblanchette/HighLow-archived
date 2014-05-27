@@ -71,18 +71,10 @@ jp.login = function(socket, msg) {
 
 jp.addClient = function( socketID, nickname ) {
     var nClient = new Client( socketID, nickname );
-    console.log("Adding new Client: ", nClient);
-
-    if(_.has(this.ClientList, socketID)){
-        console.log("***** Replaced existing client?");
-    }
-
     this.ClientList[socketID] = nClient;
-
 };
 
 jp.get = function( socketID ) {
-    console.log("Running LM.get ", socketID);
     return this.ClientList[socketID];
 };
 
