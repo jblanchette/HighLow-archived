@@ -3,7 +3,7 @@ var ChatLobby = require("./chatlobby").ChatLobby,
 
 var jChatManager = function() {
     this.Server;
-    this.rooms = [];
+    this.rooms = {};
 };
 
 var jp = jChatManager.prototype;
@@ -17,7 +17,7 @@ jp.handleMessage = function(socket, msg) {
             case "JOIN":
                 if (msg.roomName === "ANY") {
                     console.log("running ChatManager.joinDefault");
-                    this.joinDefault(socket, msg.nickname);
+                    this.joinDefault(socket);
                 }
                 break;
             case "UPDATE":
@@ -31,8 +31,11 @@ jp.handleMessage = function(socket, msg) {
  */
 jp.userDisconnect = function( socketID, _io ){
     var LM = this.Server.get("LoginManager");
-    console.log("Disc test", LM);
-    console.log("Nick: ", LM.getNickname(socketID));
+
+    var uClient = LM.get( socketID );
+
+    console.log("Client was in rooms: ", uClient.roomList);
+
 };
 
 
@@ -49,47 +52,82 @@ jp.update = function(updateObj) {
 
 jp.createRoom = function(name, owner) {
     var Lobby;
+    var LobbyID = this.generateRoomID();
 
     if (arguments.length === 0) {
         // Allocating a new global server chat room
-        Lobby = new ChatLobby();
+        Lobby = new ChatLobby(LobbyID);
     } else {
         // Creating a custom owner chat room
-        Lobby = new ChatLobby(name, owner);
+        Lobby = new ChatLobby(LobbyID, name, owner);
     }
-    this.rooms.push(Lobby);
+
+    this.rooms[Lobby.id] = Lobby;
+
+    return Lobby;
 };
 
-jp.joinDefault = function( socket, name ){
+/**
+ * Generates a unique ID used to represent each room to allow the roomName
+ * to change freely.  Also used as the hash index for fast room check / removal.
+ *
+ * @returns {String} Unique Room ID
+ */
+jp.generateRoomID = function(){
+    var n = Math.floor((Math.random() * 100000) + 1);
+    while( _.has(this.rooms, n)){
+        n = Math.floor((Math.random() * 100000) + 1);
+    }
+    console.log("Gen ID:", n);
+    return n;
+};
 
-    var foundRoom = false;
+jp.joinDefault = function( socket ){
+
+    var LM = this.Server.get("LoginManager");
+    var uClient = LM.get( socket.id );
+    var roomTest;
     var Lobby;
 
-    for(room in this.rooms){
-        if(this.rooms[room].owner === -1 && !this.rooms[room].isFull()){
-            Lobby = this.rooms[room];
-            Lobby.addMember(name);
-            foundRoom = true;
-            break;
+    // See if there is an available default room, if not create one.
+    var roomTest = _.find(this.rooms, function( room ){
+        console.log("**  TEST: ", room);
+        if( room.owner === -1 && !room.isFull() ){
+            console.log("*** FOUND VALID ROOM");
+
+            Lobby = room;
+            Lobby.addMember( uClient.socketID, uClient.nickname );
+            return true;
         }
+    });
+
+    // _.find returns undefined if no match is found.
+
+    if(roomTest === undefined){
+        // User can't fit in any existing global rooms, make a new one
+        console.log("*** MADE NEW CHAT ROOM ****");
+        Lobby = this.createRoom();
+        Lobby.addMember( uClient.socketID, uClient.nickname );
     }
 
-    if(!foundRoom){
-        // User can't fit in any existing global rooms, make a new one
-        Lobby = new ChatLobby();
-        Lobby.addMember(name);
-        this.rooms.push(Lobby);
-    }
+    uClient.addRoom( Lobby.id, Lobby.roomName );
+
+    var RoomObj = {
+        id: Lobby.id,
+        roomName: Lobby.roomName,
+        members: _.values(Lobby.members)
+    };
 
     var ClientObj = {
         type: "JOIN",
-        room: JSON.stringify(Lobby)
+        room: JSON.stringify(RoomObj)
     };
 
     var ChatObj = {
         type: "UPDATE",
-        NewMember: name
+        NewMember: uClient.nickname
     };
+
     this.sendTo(Lobby.roomName, ChatObj);
 
     socket.emit("CHAT",ClientObj);

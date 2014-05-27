@@ -1,6 +1,7 @@
 var _ = require("underscore");
 
 var jClientData = function(){
+    console.log("Init ClientData");
     this.data = {};
 
     /**
@@ -53,3 +54,5 @@ var jClientData = function(){
 
 
 };
+
+exports.ClientData = jClientData;

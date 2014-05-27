@@ -91,8 +91,7 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
 
                 var ChatObject = {
                     type : "JOIN",
-                    roomName : "ANY",
-                    nickname: this.nickname
+                    roomName : "ANY"
                 };
 
                 this.socket.emit("CHAT", ChatObject);

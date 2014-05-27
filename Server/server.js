@@ -56,12 +56,12 @@ var Server = {
     },
 
     handleDisconnect: function ( socket ){
-        var nickname = LoginManager.getNickname( socket.id );
-        var _this = this;
+        var nClient = LoginManager.get(socket.id);
 
-        console.log("Client Disconnect: ", socket.id, nickname);
-
-        ChatManager.userDisconnect( socket.id, _this.testFunc );
+        if(nClient !== undefined){
+            //ChatManager.userDisconnect( socket.id, _this.testFunc );
+            console.log("Client Disc:", nClient);
+        }
     },
 
     handleLogin : function(socket, msg) {

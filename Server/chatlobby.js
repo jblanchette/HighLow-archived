@@ -1,7 +1,10 @@
+var _ = require("underscore");
 
-var jChatLobby = function(roomName, owner) {
+var jChatLobby = function(LobbyID, roomName, owner) {
 
-    if (arguments.length === 0) {
+    this.id = LobbyID;
+
+    if (arguments.length === 1) {
         this.roomName = "Room #" + Math.floor((Math.random() * 10000) + 1);
         this.owner = -1;
     } else {
@@ -9,18 +12,18 @@ var jChatLobby = function(roomName, owner) {
         this.owner = owner;
     }
 
-    this.members = [];
+    this.members = {};
 
 };
 
 var jc = jChatLobby.prototype;
 
 jc.isFull = function(){
-    return !(this.members.length < 249);
+    return !(_.keys(this.members).length < 249);
 };
 
-jc.addMember = function(name) {
-    this.members.push(name);
+jc.addMember = function( socketID, nickname ) {
+    this.members[socketID] = nickname;
 };
 
 jc.removeMember = function(name) {
