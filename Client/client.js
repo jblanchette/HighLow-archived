@@ -55,7 +55,7 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
         },
 
         clearQueue: function(){
-            this.emitQueue = {};
+            this.emitQueue = [];
         },
 
         queue : function(emitName, emitObj) {
