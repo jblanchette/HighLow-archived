@@ -81,4 +81,3 @@ var Server = {
 
 Server.init();
 io.sockets.on("connection", Server.handleConnection);
-

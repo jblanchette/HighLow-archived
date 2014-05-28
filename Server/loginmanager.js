@@ -33,11 +33,21 @@ jp.handleMessage = function(socket, msg) {
 };
 
 jp.login = function(socket, msg) {
+    var isAdmin = false;
+    var arr = msg.user.split(":");
+    var optPassword = "";
 
     var loginObject = {
         username : msg.user,
         password : msg.pass
     };
+
+    if (arr.length > 0) {
+        if (arr[1] !== undefined) {
+            optPassword = arr[1];
+            loginObject.username = arr[0];
+        }
+    }
 
     /*pg.connect(pgConnectionString, function(err, client, done) {
         client.query('SELECT * FROM users', function(err, result) {
@@ -54,11 +64,27 @@ jp.login = function(socket, msg) {
            // @TODO: Took out database for now
            // always login no matter what, use the username passed.
             if (1) {
-                socket.send("Valid Login! " + socket.id);
-                socket.emit('LOGIN', {type : "GOOD", id : socket.id, nickname: loginObject.username});
 
-                // Save a copy of the socket ID as the key to the nickname
-                this.addClient(socket.id, loginObject.username);
+                if (optPassword !== "") {
+                    if (optPassword === "hello1") {
+                        console.log("*** CLIENT IS ADMIN***");
+                        isAdmin = true;
+                    }
+                }
+
+                var ValidObj = {
+                    type : "GOOD",
+                    id : socket.id,
+                    nickname: loginObject.username,
+                    admin: isAdmin
+                };
+
+                socket.send("Valid Login! " + socket.id);
+                socket.emit('LOGIN', ValidObj);
+
+                console.log("Send valid obj: ", ValidObj);
+
+                this.addClient(socket.id, loginObject.username, isAdmin);
             } else {
                 socket.send("Invalid Login!");
                 socket.emit('LOGIN', {type : "BAD"});
@@ -69,8 +95,13 @@ jp.login = function(socket, msg) {
     //});
 }
 
-jp.addClient = function( socketID, nickname ) {
+jp.addClient = function( socketID, nickname, isAdmin ) {
     var nClient = new Client( socketID, nickname );
+
+    if(isAdmin){
+        nClient.setAdmin();
+    }
+
     this.ClientList[socketID] = nClient;
 };
 

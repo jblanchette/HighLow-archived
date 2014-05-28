@@ -13,7 +13,8 @@ and open the template in the editor.
         <script data-main="app" src="require.js"></script>
 
         <style type="text/css">
-            #controls {
+            body { font-family: Verdana; }
+            #controls, #adminControls {
                 border: 1px solid #333;
                 padding: 10px;
                 min-width: 300px;
@@ -21,12 +22,20 @@ and open the template in the editor.
                 vertical-align: top;
             }
 
+            #controls h3 {
+                margin: 2px;
+            }
+
+            #adminControls {
+                display: none;
+            }
+
             #messages {
                 border: 1px solid #333;
                 padding: 8px;
                 font-size: 14px;
                 line-height: 22px;
-                height: 200px;
+                height: 100px;
                 width: 350px;
                 overflow: auto;
                 margin-bottom: 8px;
@@ -37,7 +46,7 @@ and open the template in the editor.
                 padding: 8px;
                 font-size: 14px;
                 line-height: 22px;
-                height: 200px;
+                height: 140px;
                 width: 350px;
                 overflow: auto;
             }
@@ -56,7 +65,7 @@ and open the template in the editor.
                 padding: 10px;
             }
 
-            #chatMessages {
+            .chatMessages {
                 vertical-align: top;
                 min-height: 480px;
                 width: 565px;
@@ -68,7 +77,7 @@ and open the template in the editor.
                 margin-right: 10px;
             }
 
-            #chatList {
+            .chatList {
                 vertical-align: top;
                 display: inline-block;
                 width: 275px;
@@ -82,23 +91,23 @@ and open the template in the editor.
                 padding: 0;
             }
 
-            #chatList li {
+            .chatList li {
                 display: block;
                 height: 25px;
                 list-style: none;
             }
 
-            #chatMessages li {
+            .chatMessages li {
                 display: block;
                 height: 25px;
                 list-style: none;
             }
 
-            #chatInputHolder {
+            .chatInputHolder {
                 margin-top: 6px;
             }
 
-            #chatInputHolder input[type="text"] {
+            .chatInputHolder input[type="text"] {
                 font: 16px Verdana;
                 width: 573px;
                 height: 20px;
@@ -106,11 +115,34 @@ and open the template in the editor.
                 margin-right: 20px;
             }
 
-            #chatInputHolder input[type="button"] {
+            .chatInputHolder input[type="button"] {
                 font: 18px Verdana;
                 width: 275px;
                 height: 32px;
                 padding: 2px;
+            }
+
+            #lobbyTabs {
+                width: 500px;
+
+                border: 1px solid #333;
+                padding: 0;
+                margin-bottom: 4px;
+            }
+
+            #lobbyTabs li {
+                cursor: pointer;
+                padding: 4px;
+                display: inline-block;
+                text-align: center;
+                height: 19px;
+                border: 1px solid #CCC;
+                min-width: 100px;
+                background-color: #FFF;
+            }
+
+            #lobbyTabs li:hover {
+                background-color: #CCC;
             }
         </style>
     </head>
@@ -122,6 +154,16 @@ and open the template in the editor.
                 Pass: <input type="text" id="loginPass" value="test"> <br>
                 <input type="button" id="button_login" value="Login">
                 <input type="button" id="button_joinChat" value="Join Chat">
+                <hr>
+                Make Chatroom: <br>
+                <input type="text" id="makeChat_name"  onclick="this.value=''" value="Room Name"> <br>
+                <input type="button" id="button_makeChat" value="Make and Join"> <br>
+            </div>
+
+            <div id="adminControls">
+                Kick User: <br>
+                <input type="text" id="adminInput" value="Nickname...">
+                <input type="button" id="button_kickUser" value="Kick"> <br>
             </div>
 
             <div id="messages">
@@ -141,13 +183,13 @@ and open the template in the editor.
         </div>
 
         <div id="lobby">
-            <div id="chatHeader"><h4>Lobby</h4></div>
-            <div id="chatMessages"></div>
-            <div id="chatList"></div>
+            <div id="lobbyTabs">
+                <ul>
+                    <li>Test</li>
+                </ul>
+            </div>
+            <div id="lobbyHolder">
 
-            <div id="chatInputHolder">
-                <input type="text" value="Enter Message..." onclick="this.value=''" id="chatInput">
-                <input type="button" value="Send" id="button_sendChat">
             </div>
         </div>
     </body>

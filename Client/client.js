@@ -1,13 +1,15 @@
-define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
+define(['socketio', 'underscore', 'chatmanager', 'jquery'], function(io, _, ChatManager, $) {
 
     var Client = {
         debug : true,
         domElements :
         ["messages", "loginUser", "loginPass",
             "chatInput", "chatMessages", "chatList",
-            "chatHeader"],
+            "chatHeader", "lobbyHolder",
+            "adminControls"],
         elements : {},
         nickname: "",
+        isAdmin: false,
         emitQueue : [],
         socket : null,
         events : {
@@ -31,6 +33,19 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
 
             this.getDom("loginUser").value = "User#" + Math.floor((Math.random() * 10000) + 1);
         },
+
+        adminFunc: function( name, data ){
+            switch(name){
+                case "kick":
+                    var KickObj = {
+                        type: "UPDATE",
+                        roomName: ChatManager.Lobby.name,
+                        RemoveMember: data
+                    };
+                    this.queue("CHAT",KickObj);
+                    break;
+            }
+        },
         /**
          * Get the DOM Element instance of the given ID.
          *
@@ -51,7 +66,12 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
                 })
             });
 
-            this.socket.on('connect', Client.onConnect);
+            this.socket.on('connect', Client.onConnect.bind(this));
+
+            this.socket.on('disconnect', function(){
+                console.log(_this.socket.socket);
+            });
+
         },
 
         clearQueue: function(){
@@ -82,15 +102,31 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
 
             this.emitQueue = [];
         },
+
+        onDisconnect: function( socket ){
+            console.log("Server disconnected!", socket);
+            io.disconnect();
+            this.socket = null;
+            this.clearQueue();
+        },
+
         onConnect : function() {
             console.log("onConnect called");
             Client.runQueue();
         },
 
         handleLogin : function(data) {
-
+            console.log("*** Handle Login:", data);
             if (data.type === "GOOD") {
+                this.updateStatus("connected", "True");
+                this.updateStatus("logged_in", "True");
                 this.nickname = data.nickname;
+
+                if(data.admin){
+                    this.isAdmin = true;
+                    this.getDom("adminControls").style.display = "block";
+                    this.debugMsg("** User granted Admin rights.");
+                }
 
                 this.debugMsg("Asking server to join chat.");
 
@@ -124,16 +160,31 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
                 pass : _pass
             }
 
-            this.clearQueue();
-            this.queue('LOGIN', LoginObject);
-            this.setup();
+            this.getDom("loginUser").value = "";
+            this.getDom("loginPass").value = "";
+
+            if(this.socket === null || !this.socket.socket.connected){
+                this.clearMsg();
+                this.clearQueue();
+                this.queue('LOGIN', LoginObject);
+                this.setup();
+            }else{
+                console.log("NO LOGIN, already conn");
+            }
         },
 
-        sendMessage: function(){
-
+        sendMessage: function( chatID, chatMsg ){
+            console.log("Tryign to send to " + chatID + " msg: " + chatMsg);
             if(this.isConnected()){
-                var msg = this.nickname + ": " + this.getDom("chatInput").value;
-                ChatManager.sendMessage.apply(ChatManager, [msg]);
+
+                var chatEl = document.getElementById(chatID);
+                if(chatEl === undefined){
+                    console.warn("Could not find Chat Lobby: " + chatID);
+                    return;
+                }
+                var msg = this.nickname + ": " + chatMsg;
+                console.log("***Client sending msg to " + chatID + ": " + msg);
+                ChatManager.sendMessage.apply(ChatManager, [chatID, msg]);
             }else{
                 this.debugMsg("Error, you must login first.");
             }
@@ -148,10 +199,55 @@ define(['socketio', 'underscore', 'chatmanager'], function(io, _, ChatManager) {
             return this.socket.socket.connected;
         },
 
-        debugMsg : function(msg) {
-            if (this.debug) {
-                this.getDom("messages").innerHTML += msg + "<br>";
-            }
+        clearMsg: function(){
+            this.getDom("messages").innerHTML = "<h3>Messages</h3>";
+        },
+
+        addChatLobby: function( Lobby ){
+
+           var holder = this.getDom("lobbyHolder");
+
+           console.log("**** Lobby Test: " + Lobby);
+
+           var newEl = document.createElement("div");
+           var chatID = "chatLobby" + (holder.children.length + 1);
+
+           var html = '<div id="' + chatID + '">' +
+           '<div id="' + chatID + '_header" class="chatHeader"><h4>Lobby</h4></div>' +
+            '<div id="' + chatID + '_messages" class="chatMessages"></div>' +
+            '<div id="' + chatID + '_list" class="chatList"></div>' +
+
+            '<div class="chatInputHolder">' +
+                '<input type="text" value="Enter Message..."' +
+                'onclick="this.value=\'\'" id="' + chatID + '_input" class="chatInput">' +
+                '<input type="button" value="Send"' +
+                'id="' + chatID + '_sendChat" class="sendChat">' +
+            '</div>' +
+            '</div>';
+
+            newEl.innerHTML = html;
+
+            holder.appendChild(newEl);
+
+
+            var send = $('#' + chatID + '_sendChat');
+
+            send.click(function(){
+                var chatInput = $('#' + chatID + '_input').val();
+                Client.sendMessage(chatID, chatInput);
+            });
+
+            var tabEl = document.createElement("li");
+            tabEl.innerHTML = Lobby.roomName;
+
+            $('#lobbyTabs ul').append(tabEl);
+
+            return chatID;
+        },
+
+
+        debugMsg: function(msg) {
+            this.getDom("messages").innerHTML += msg + "<br>";
         },
         updateStatus : function(name, value) {
             var element = document.getElementById(name);

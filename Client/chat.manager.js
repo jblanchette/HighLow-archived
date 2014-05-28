@@ -1,8 +1,9 @@
-define(['underscore', 'chatlobby'], function(_, ChatLobby) {
+define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
 
     var jChatManager = function() {
         this.Client = null;
-        this.Lobby = null;
+        this.Lobbies = {};
+        this.selectedLobby = "";
     };
 
     var jp = jChatManager.prototype;
@@ -11,24 +12,30 @@ define(['underscore', 'chatlobby'], function(_, ChatLobby) {
         this.Client = client;
     };
 
-    jp.sendMessage = function(msg) {
+    jp.sendMessage = function( cID, msg) {
+
+        var Lobby = _.findWhere( this.Lobbies, {chatID: cID});
+        console.log(this.Lobbies);
+        console.log("*** Sending to Lobby: ", Lobby);
         var ChatObj = {
                 type: "UPDATE",
                 NewMessage: msg,
-                roomName: this.Lobby.roomName
+                roomID: Lobby.id,
+                roomName: Lobby.roomName
         };
 
-        console.log("Calling sendMessage", ChatObj);
         this.Client.queue("CHAT", ChatObj);
     };
 
     jp.handleMessage = function(msg) {
-        console.log("Handle Message: ", msg);
+        console.log("ChatMngr handleMessage: ", msg);
+        console.log("msg.type === " + msg.type + " test : " + (msg.type === "UPDATE"));
         switch (msg.type) {
             case "JOIN":
                 this.joinLobby(msg);
                 break;
             case "UPDATE":
+                console.log("Calling this.update with msg");
                 this.update(msg);
                 break;
         }
@@ -36,37 +43,48 @@ define(['underscore', 'chatlobby'], function(_, ChatLobby) {
 
     jp.joinLobby = function(msg) {
         console.log("Joining chat lobby!");
-        try {
+        /*try {*/
             var obj = JSON.parse(msg.room);
+
             console.log("Chat Obj: " + obj);
             this.Client.debugMsg("Joined Room: " + JSON.stringify(obj));
-            this.Lobby = new ChatLobby(obj);
+            this.Client.updateStatus("room_name", obj.roomName);
+
+
+            var chatID = this.Client.addChatLobby( obj );
+
+            this.Lobbies[obj.id] = new ChatLobby(chatID, obj);
+
+            if(this.selectedLobby === ""){
+                this.selectedLobby = chatID;
+            }
+
             this.render();
 
 
-        } catch (e) {
+       /* } catch (e) {
             console.warn("Error in ChatManager.joinLobby", e);
-        }
+        }*/
     };
 
     jp.update = function(updateObj) {
-
-        console.log("Update obj: ", updateObj);
-
+        console.log("Calling update() ", updateObj);
         if (_.has(updateObj, "NewMember")){
             console.log("Added new member: ", updateObj.NewMember);
-            this.Lobby.members.push(updateObj.NewMember);
-            this.Lobby.members.sort();
+            this.Lobbies[updateObj.roomID].members.push(updateObj.NewMember);
+            this.Lobbies[updateObj.roomID].members.sort();
         }
 
         if(_.has(updateObj, "RemoveMember")){
             console.log("removeing member:" + updateObj.RemoveMember);
-            this.Lobby.members = _.without(this.Lobby.members, updateObj.RemoveMember);
+            this.Lobbies[updateObj.roomID].members =
+            _.without(this.Lobbies[updateObj.roomID].members,
+                      updateObj.RemoveMember);
         }
 
         if(_.has(updateObj, "NewMessage")){
             console.log("New Chat Message: ", updateObj.NewMessage);
-            this.Lobby.messages.push(updateObj.NewMessage);
+            this.Lobbies[updateObj.roomID].messages.push(updateObj.NewMessage);
         }
 
 
@@ -76,31 +94,48 @@ define(['underscore', 'chatlobby'], function(_, ChatLobby) {
     };
 
     jp.render = function() {
-        var listHTML = "<ul>";
-        var msgHTML = "<ul>";
+        var listHTML;
+        var msgHTML;
         var _this = this;
 
-        if (this.Lobby === null) {
+        if (_.keys(this.Lobbies).length === 0) {
             return;
         }
 
-        console.log("Calilng Chat.render()", this.Lobby);
-        this.Client.getDom("chatHeader").innerHTML = "<h4>" + this.Lobby.roomName + "</h4>";
+        console.log("Calilng Chat.render()", this.Lobbies);
 
+        var localLobby;
 
-        _.each(this.Lobby.members, function(member) {
-            listHTML += "<li>" + member + "</li>";
+        _.each(this.Lobbies, function(Lobby) {
+            console.log("Rendering ", Lobby);
+
+            listHTML = "<ul>";
+            msgHTML = "<ul>";
+
+            localLobby = _this.Lobbies[Lobby.id];
+            console.log("Local lobby: ", localLobby);
+
+            $('#' + localLobby.chatID + "_header").html("<h4>" + Lobby.roomName + "</h4>");
+
+            _.each(Lobby.members, function(member) {
+                listHTML += "<li>" + member + "</li>";
+            });
+
+            listHTML += "</ul>";
+
+            $('#' + localLobby.chatID + "_list").html(listHTML);
+
+            _.each(Lobby.messages, function(msg) {
+                msgHTML += "<li>" + msg + "</li>";
+            });
+
+            msgHTML += "</ul>";
+
+            console.log("Message html: ", msgHTML);
+            console.log("Test: ", $(localLobby.chatID + "_messages"));
+            $('#' + localLobby.chatID + "_messages").html(msgHTML);
+
         });
-        listHTML += "</ul>";
-
-        this.Client.getDom("chatList").innerHTML = listHTML;
-
-        _.each(this.Lobby.messages, function(msg) {
-            msgHTML += "<li>" + msg + "</li>";
-        });
-        msgHTML += "</ul>";
-
-        this.Client.getDom("chatMessages").innerHTML = msgHTML;
 
     };
 

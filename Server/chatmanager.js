@@ -16,7 +16,6 @@ jp.handleMessage = function(socket, msg) {
     switch (msg.type) {
             case "JOIN":
                 if (msg.roomName === "ANY") {
-                    console.log("running ChatManager.joinDefault");
                     this.joinDefault(socket);
                 }
                 break;
@@ -32,7 +31,7 @@ jp.handleMessage = function(socket, msg) {
 jp.userDisconnect = function( nClient ){
     var _this = this;
     var DiscObj;
-
+    console.log("*** Client Chat Disc ****");
     console.log("Client was in rooms: ", nClient.roomList);
 
     _.each( nClient.roomList, function(roomName, roomID){
@@ -41,9 +40,12 @@ jp.userDisconnect = function( nClient ){
             roomID: roomID,
             RemoveMember: nClient.nickname
         };
+
         console.log("Telling Room " + roomID + " That he disc");
+
         _this.removeUserFromRoom( roomID, nClient.socketID );
-        _this.sendTo( roomID, JSON.stringify(DiscObj) );
+        _this.sendTo( roomID, DiscObj );
+        console.log("********************************");
 
     });
 
@@ -56,16 +58,15 @@ jp.removeUserFromRoom = function( roomID, clientID ){
         console.log("Room before: ", this.rooms[roomID].members);
         room.removeMember( clientID );
         console.log("Room after: ", this.rooms[roomID].members);
-        //this.rooms[roomID] = room;
     }
 };
 
 jp.update = function(updateObj) {
 
-        console.log("Chat Update: ", updateObj);
+        console.log("Client Sent Chat Update: ", updateObj);
 
         if(_.has(updateObj, "roomName")){
-            this.sendTo(updateObj.roomName, updateObj);
+            this.sendTo(updateObj.id, updateObj);
         }
 
     };
@@ -154,13 +155,18 @@ jp.joinDefault = function( socket ){
     this.sendTo(Lobby.id, ChatObj);
 
     socket.emit("CHAT",ClientObj);
-    socket.join(Lobby.roomName);
+    socket.join(Lobby.id);
 
+    console.log("********************************");
+    console.log("Client " + uClient.nickname + " Joined Chat Lobby: " + Lobby.roomName);
+    console.log("********************************");
 
 };
 
 jp.sendTo = function( roomID , msg ) {
-    console.log("Sending Chat emit", msg);
+    console.log("********************************");
+    console.log("Sending Chat emit to " + roomID, msg);
+    console.log("********************************");
     this.Server.get("IO").sockets.to( roomID ).emit("CHAT", msg);
 };
 
