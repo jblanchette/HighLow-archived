@@ -1,0 +1,131 @@
+body { font-family: Verdana; }
+#controls, #adminControls {
+    border: 1px solid #333;
+    padding: 10px;
+    min-width: 300px;
+    margin-bottom: 10px;
+    vertical-align: top;
+}
+
+#controls h3 {
+    margin: 2px;
+}
+
+#adminControls {
+    display: none;
+}
+
+#messages {
+    border: 1px solid #333;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 22px;
+    height: 100px;
+    width: 350px;
+    overflow: auto;
+    margin-bottom: 8px;
+}
+
+#status {
+    border: 1px solid #0000FF;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 22px;
+    height: 140px;
+    width: 350px;
+    overflow: auto;
+}
+
+#devtools {
+    display: inline-block;
+    margin-right: 8px;
+}
+
+#lobby {
+    vertical-align: top;
+    border: 1px solid #333;
+    width: 900px;
+    min-height: 500px;
+    display: inline-block;
+    padding: 10px;
+}
+
+.chatMessages {
+    vertical-align: top;
+    min-height: 480px;
+    width: 565px;
+    border: 1px solid #CCC;
+    padding: 8px;
+    font: 16px Verdana;
+    line-height: 23px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.chatList {
+    vertical-align: top;
+    display: inline-block;
+    width: 275px;
+    padding: 8px;
+    min-height: 480px;
+    border: 1px solid #00FF00;
+}
+
+li,ul {
+    margin: 0;
+    padding: 0;
+}
+
+.chatList li {
+    display: block;
+    height: 25px;
+    list-style: none;
+}
+
+.chatMessages li {
+    display: block;
+    height: 25px;
+    list-style: none;
+}
+
+.chatInputHolder {
+    margin-top: 6px;
+}
+
+.chatInputHolder input[type="text"] {
+    font: 16px Verdana;
+    width: 573px;
+    height: 20px;
+    padding: 3px;
+    margin-right: 20px;
+}
+
+.chatInputHolder input[type="button"] {
+    font: 18px Verdana;
+    width: 275px;
+    height: 32px;
+    padding: 2px;
+}
+
+#lobbyTabs {
+    width: 500px;
+
+    border: 1px solid #333;
+    padding: 0;
+    margin-bottom: 4px;
+}
+
+#lobbyTabs li {
+    cursor: pointer;
+    padding: 4px;
+    display: inline-block;
+    text-align: center;
+    height: 19px;
+    border: 1px solid #CCC;
+    min-width: 100px;
+    background-color: #FFF;
+}
+
+#lobbyTabs li:hover {
+    background-color: #CCC;
+}

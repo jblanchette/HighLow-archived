@@ -15,9 +15,36 @@ jp.setup = function ( server ){
 jp.handleMessage = function(socket, msg) {
     switch (msg.type) {
             case "JOIN":
-                if (msg.roomName === "ANY") {
-                    this.joinDefault(socket);
-                }
+                    if (msg.roomName === "ANY") {
+                        this.joinDefault(socket);
+                    }
+                break;
+            case "CREATE":
+                    console.log("Got Chat CREATE Message");
+
+                    var nClient
+                        = this.Server.get("LoginManager").get(socket.id);
+
+                    var Lobby = this.createRoom(msg.roomName, nClient.id);
+
+                    console.log("New Lobby: " + Lobby.id + " : " + Lobby.roomName);
+
+                    Lobby.addMember(nClient.id, nClient.nickname);
+
+                    var RoomObj = {
+                        id : Lobby.id,
+                        roomName : Lobby.roomName,
+                        members : _.values(Lobby.members)
+                    };
+
+                    var ClientObj = {
+                        type: "JOIN",
+                        room: JSON.stringify(RoomObj)
+                    };
+
+                    socket.emit("CHAT", ClientObj);
+                    socket.join(Lobby.id);
+
                 break;
             case "UPDATE":
                     this.update( msg );

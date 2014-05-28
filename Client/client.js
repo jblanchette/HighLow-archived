@@ -17,6 +17,7 @@ define(['socketio', 'underscore', 'chatmanager', 'jquery'], function(io, _, Chat
             'CHAT' : 'handleChatMsg',
             'GAME' : 'handleGameMsg'
         },
+
         init : function() {
             console.log("Initalized Client");
             _this = this;
@@ -32,7 +33,46 @@ define(['socketio', 'underscore', 'chatmanager', 'jquery'], function(io, _, Chat
             this.debugMsg("Started Client");
 
             this.getDom("loginUser").value = "User#" + Math.floor((Math.random() * 10000) + 1);
+
+            this.setupDom();
+
         },
+
+        setupDom: function() {
+
+            var login = $("#button_login");
+            login.click(function() {
+                Client.login();
+            });
+
+            /*var send = getEl("button_sendChat");
+             send.addEventListener("click", function(){
+             Client.sendMessage();
+             });*/
+
+            $('#button_kickUser').click(function() {
+                console.log("Kicking user: ", $("#adminInput").val());
+                Client.adminFunc("kick", adminInput.value);
+            });
+
+            $('#button_makeChat').click(function(){
+                console.log("Making chat");
+                Client.makeChat($("#makeChat_name").val());
+            });
+
+
+        },
+
+        makeChat: function( name ){
+            console.log("Making chat: ", name);
+            var ChatObj = {
+                type: "CREATE",
+                roomName: name
+            };
+
+            this.queue("CHAT",ChatObj);
+        },
+
         adminFunc : function(name, data) {
             switch (name) {
                 case "kick":
@@ -228,7 +268,7 @@ define(['socketio', 'underscore', 'chatmanager', 'jquery'], function(io, _, Chat
             tabEl.id = chatID + '_tab';
 
             tabEl.addEventListener("click", function() {
-                Client.ChatManager.selectTab(chatID);
+                Client.selectLobby(chatID);
             });
 
             $('#lobbyTabs ul').append(tabEl);
@@ -236,7 +276,7 @@ define(['socketio', 'underscore', 'chatmanager', 'jquery'], function(io, _, Chat
             return chatID;
         },
 
-        showLobby : function(chatID) {
+        selectLobby: function(chatID) {
             var lobbyEl = $('#' + chatID);
             var oldLobby = ChatManager.selectedLobby;
             if (lobbyEl !== undefined) {

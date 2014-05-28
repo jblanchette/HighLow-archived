@@ -57,7 +57,7 @@ define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
             this.render();
 
             if(this.selectedLobby === ""){
-                this.Client.showLobby(chatID);
+                this.Client.selectLobby(chatID);
             }
 
        /* } catch (e) {
