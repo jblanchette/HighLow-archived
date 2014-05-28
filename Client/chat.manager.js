@@ -54,13 +54,11 @@ define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
             var chatID = this.Client.addChatLobby( obj );
 
             this.Lobbies[obj.id] = new ChatLobby(chatID, obj);
-
-            if(this.selectedLobby === ""){
-                this.selectedLobby = chatID;
-            }
-
             this.render();
 
+            if(this.selectedLobby === ""){
+                this.Client.showLobby(chatID);
+            }
 
        /* } catch (e) {
             console.warn("Error in ChatManager.joinLobby", e);
