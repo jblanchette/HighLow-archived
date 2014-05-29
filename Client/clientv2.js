@@ -3,6 +3,7 @@ define(['socketio', 'underscore', 'loginmanager', 'chatmanager', 'gamemanager', 
 
     var Client = {
 
+        // @TODO: Don't call it a list? Since it's an object? Or idk...
         emitList: {
             "LOGIN": LoginManager.handleMessage,
             "CHAT":  ChatManager.handleMesssage,
@@ -15,6 +16,7 @@ define(['socketio', 'underscore', 'loginmanager', 'chatmanager', 'gamemanager', 
             this.emitQueue = [];
         },
 
+        // @TODO: This should be in the LoginManager
         login : function(_user, _pass) {
 
             var LoginObject = {
@@ -22,7 +24,7 @@ define(['socketio', 'underscore', 'loginmanager', 'chatmanager', 'gamemanager', 
                 pass : _pass
             }
 
-            if (this.socket === null || !this.socket.socket.connected) {
+            if (!this.isConnected()) {
                 this.clearMsg();
                 this.clearQueue();
                 this.queue('LOGIN', LoginObject);
@@ -31,53 +33,92 @@ define(['socketio', 'underscore', 'loginmanager', 'chatmanager', 'gamemanager', 
 
         },
 
-        setup: function(){
 
-            var _this = this;
-
-            this.socket = this.io.connect("http://localhost:8080");
+        /**
+         * Setup the socket.io connection to the server.
+         * Dispatch the handlers for emit messages from the emitList.
+         *
+         * When an emit message is recieved, it is sent to the handler
+         * function based on the key in the emitList object.
+         *
+         * @returns {undefined}
+         */
+        setupConnection: function(){
+            try {
+                this.socket = this.io.connect("http://localhost:8080");
+            } catch (e) {
+                console.warn("Error trying to connect to Server: ", e);
+                return;
+            }
 
             _.each(Client.emitList, function( emitFunc, emitKey ) {
-                _this.socket.on(emitKey, function( msg ) {
+                Client.socket.on(emitKey, function( msg ) {
                     emitFunc.call(_this, msg);
                 });
             });
         },
 
+        /**
+         * Hard clear the emitQueue
+         */
         clearQueue : function() {
             this.emitQueue = [];
         },
+
+        /**
+         * Put a message object into the emit queue.
+         *
+         * If the socket is connected, run the queue in FIFO order.
+         *
+         * @param {String} emitName
+         * @param {Object} emitObj
+         */
         queue : function(emitName, emitObj) {
 
             this.emitQueue.push({
-                name : emitName,
-                obj : emitObj
+                emitKey: emitName,
+                emitObj: emitObj
             });
 
 
-            if (this.socket !== null && this.socket.socket.connected) {
+            if (this.isConnected()) {
                 this.runQueue();
             }
         },
+
+        /**
+         * Loop through each message in the emitQueue and try to emit it.
+         */
         runQueue : function() {
-            if (!this.socket.socket.connected) {
+            if (!this.isConnected()) {
                 console.warn("Tried to run queue without being connected.");
                 return false;
             }
-            _.each(this.emitQueue, function(e) {
-                console.log("Sending message in queue", e);
-                Client.socket.emit(e.name, e.obj);
-            });
 
-            this.emitQueue = [];
+            _.each(this.emitQueue, function( msg ) {
+                console.log("Sending message in queue", msg);
+                try {
+                    Client.socket.emit(msg.emitKey, msg.emitObj);
+                    // Remove this msg from the queue
+                    this.emitQueue.splice(0,1);
+                } catch(e) {
+                    console.warn("Problem sending queue msg: ", e);
+                    console.warm("Queue Msg: ", msg);
+                }
+            });
+        },
+
+        isConnected: function(){
+
         },
 
         onConnect: function(){
-
+            Client.runQueue();
         },
 
         onDisconnect: function(){
-
+            // @TODO: Figure out weirdness with socket.io heartbeat
+            //        Maybe have to roll back to different socket.io version?
         }
     };
 
