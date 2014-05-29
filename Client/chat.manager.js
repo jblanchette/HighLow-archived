@@ -3,6 +3,7 @@ define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
     var jChatManager = function() {
         this.Client = null;
         this.Lobbies = {};
+        this.ServerLobbies = {};
         this.selectedLobby = "";
     };
 
@@ -53,7 +54,9 @@ define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
 
             var chatID = this.Client.addChatLobby( obj );
 
-            this.Lobbies[obj.id] = new ChatLobby(chatID, obj);
+            this.Lobbies[obj.id] =
+                new ChatLobby(chatID, obj);
+
             this.render();
 
             if(this.selectedLobby === ""){
@@ -85,6 +88,15 @@ define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
             this.Lobbies[updateObj.roomID].messages.push(updateObj.NewMessage);
         }
 
+        if(_.has(updateObj, "action")){
+            switch(updateObj.action){
+                case "RefreshList":
+                    console.log("*********Updated Rooms");
+                    this.ServerLobbies = updateObj.rooms;
+                    break;
+            }
+        }
+
 
 
         this.render();
@@ -103,6 +115,18 @@ define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
         console.log("Calilng Chat.render()", this.Lobbies);
 
         var localLobby;
+        var joinList = document.getElementById('joinChat_list');
+        var joinEl;
+
+        joinList.innerHTML = "";
+        this.ServerLobbies = this.ServerLobbies.sort();
+        _.each(this.ServerLobbies, function(Lobby){
+            joinEl = document.createElement("option");
+            joinEl.value = Lobby.id;
+            joinEl.innerHTML = Lobby.roomName;
+            joinList.appendChild(joinEl);
+        });
+
 
         _.each(this.Lobbies, function(Lobby) {
             console.log("Rendering ", Lobby);

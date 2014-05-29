@@ -60,7 +60,20 @@ define(['socketio', 'underscore', 'chatmanager', 'jquery'], function(io, _, Chat
                 Client.makeChat($("#makeChat_name").val());
             });
 
+            $('#button_refreshList').click(function(){
+                Client.refreshList();
+            });
 
+
+        },
+
+        refreshList: function(){
+            var ChatObj = {
+                type: "UPDATE",
+                action: "RefreshList"
+            };
+
+            this.queue("CHAT",ChatObj);
         },
 
         makeChat: function( name ){
