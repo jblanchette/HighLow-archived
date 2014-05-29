@@ -18,8 +18,14 @@ define(['socketio', 'underscore', 'chatmanager', 'jquery'], function(io, _, Chat
             'GAME' : 'handleGameMsg'
         },
 
+        test: {
+            'A': ChatManager.handleMessage
+        },
+
         init : function() {
             console.log("Initalized Client");
+
+            
             _this = this;
             _.map(this.domElements, function(el) {
                 _this.elements[el] = document.getElementById(el);

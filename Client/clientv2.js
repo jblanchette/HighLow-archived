@@ -2,7 +2,12 @@ define(['socketio', 'underscore', 'loginmanager', 'chatmanager', 'gamemanager', 
     function(io, _, LoginManager, ChatManager, GameManager, $) {
 
     var Client = {
-        emitKeys: ["LOGIN", "CHAT", "GAME"],
+
+        emitList: {
+            "LOGIN": LoginManager.handleMessage,
+            "CHAT":  ChatManager.handleMesssage,
+            "GAME":  GameManager.handleMessage
+        },
 
         init: function(){
             this.io = io;
@@ -23,7 +28,7 @@ define(['socketio', 'underscore', 'loginmanager', 'chatmanager', 'gamemanager', 
                 this.queue('LOGIN', LoginObject);
                 this.setup();
             }
-            
+
         },
 
         setup: function(){
@@ -32,19 +37,9 @@ define(['socketio', 'underscore', 'loginmanager', 'chatmanager', 'gamemanager', 
 
             this.socket = this.io.connect("http://localhost:8080");
 
-            _.each(Client.emitKeys, function(key) {
-                _this.socket.on(key, function(data) {
-                    switch (key) {
-                        case "LOGIN":
-                            LoginManager.handleMessage.apply(_this, [key, data]);
-                            break;
-                        case "CHAT":
-                            ChatManager.handleMessage.apply(_this, [key, data]);
-                            break;
-                        case "GAME":
-                            GameManager.handleMessage.apply(_this, [key, data]);
-                            break;
-                    }
+            _.each(Client.emitList, function( emitFunc, emitKey ) {
+                _this.socket.on(emitKey, function( msg ) {
+                    emitFunc.call(_this, msg);
                 });
             });
         },
