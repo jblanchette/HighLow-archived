@@ -73,7 +73,7 @@ define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
         if (_.has(updateObj, "NewMember")){
             console.log("Added new member: ", updateObj.NewMember);
             this.Lobbies[updateObj.roomID].members.push(updateObj.NewMember);
-            this.Lobbies[updateObj.roomID].members.sort();
+            //this.Lobbies[updateObj.roomID].members.sort();
         }
 
         if(_.has(updateObj, "RemoveMember")){
@@ -119,7 +119,7 @@ define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
         var joinEl;
 
         joinList.innerHTML = "";
-        this.ServerLobbies = this.ServerLobbies.sort();
+        //this.ServerLobbies = this.ServerLobbies.sort();
         _.each(this.ServerLobbies, function(Lobby){
             joinEl = document.createElement("option");
             joinEl.value = Lobby.id;

@@ -47,7 +47,7 @@ jp.handleMessage = function(socket, msg) {
 
                 break;
             case "UPDATE":
-                    this.update( msg );
+                    this.update( socket, msg );
                 break;
     }
 };
@@ -88,12 +88,27 @@ jp.removeUserFromRoom = function( roomID, clientID ){
     }
 };
 
-jp.update = function(updateObj) {
+jp.update = function( socket, updateObj ) {
 
         console.log("Client Sent Chat Update: ", updateObj);
 
         if(_.has(updateObj, "roomName")){
             this.sendTo(updateObj.id, updateObj);
+        }
+
+        if(_.has(updateObj, "action")){
+            switch(updateObj.action){
+                case "RefreshList":
+                    var ChatObj = {
+                        type: "UPDATE",
+                        action: "RefreshList",
+                        rooms: this.rooms
+                    };
+
+                    console.log("Sending RefreshList: ", ChatObj);
+                    socket.emit("CHAT", ChatObj);
+                    break;
+            }
         }
 
     };
