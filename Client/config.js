@@ -6,6 +6,7 @@ var require = {
         "chatmanager": 'chat.manager',
         "msg": 'lib/data/msg',
         "jquery": 'bower_components/jquery/jquery',
-        "client": 'client'
+        "client": 'client',
+        "msgdef": 'lib/data/msg.definitions'
     }
 };

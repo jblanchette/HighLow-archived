@@ -1,16 +1,8 @@
-define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
+define(['underscore', 'chatlobby', 'msgdef', jquery'], function(_, ChatLobby, MsgDef, $) {
 
     var jChatManager = function() {
 
-        this.actions = {
-          "JOIN": joinLobby,
-          "CREATE": createLobby,
-          "LEAVE": leaveLobby,
-          "NEWMSG": newMsg,
-          "FUNC": execFunc
-        };
-
-
+        this.actions = MsgDef["CHAT"];
         this.Client = null;
         this.Lobbies = {};
         this.ServerLobbies = {};
@@ -81,7 +73,7 @@ define(['underscore', 'chatlobby', 'jquery'], function(_, ChatLobby, $) {
         // Some example functions passed would be "kick", "ban", "change topic",
         // and other minor things that might just get passed to the lobby
         // instance or something instead.
-        
+
         /* Msg Synopsis:
          *
          * .action: FUNC
