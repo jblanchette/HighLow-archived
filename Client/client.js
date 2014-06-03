@@ -1,4 +1,5 @@
-define(['socketio', 'underscore', 'chatmanager', 'jquery'], function(io, _, ChatManager, $) {
+define(['require', 'socketio', 'underscore', 'chatmanager', 'jquery', 'msg'],
+function(require, io, _, ChatManager, $, jMsg) {
 
     var Client = {
         debug : true,
@@ -25,7 +26,12 @@ define(['socketio', 'underscore', 'chatmanager', 'jquery'], function(io, _, Chat
         init : function() {
             console.log("Initalized Client");
 
-            
+            var jTest = new jMsg();
+
+            console.log("JTest: ", jTest);
+
+            return;
+
             _this = this;
             _.map(this.domElements, function(el) {
                 _this.elements[el] = document.getElementById(el);

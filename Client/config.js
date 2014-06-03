@@ -4,6 +4,8 @@ var require = {
         "underscore": 'bower_components/underscore/underscore',
         "chatlobby": 'chat.lobby',
         "chatmanager": 'chat.manager',
-        "jquery": 'bower_components/jquery/jquery'
+        "msg": 'lib/data/msg',
+        "jquery": 'bower_components/jquery/jquery',
+        "client": 'client'
     }
 };
