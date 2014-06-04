@@ -1,14 +1,11 @@
-console.log("Loaded msg");
 define(['underscore'], function(_) {
 
-    var jMsg = function(type, action) {
-
-      // DERP
-      var Client = require("client");
+    var jMsg = function(type, action, op) {
+      this.Client = require("client");
 
       console.log("Test: ", Client);
-      this.type = "";
-      this.action = "";
+      this.type = type;
+      this.action = action;
       ;
     };
 
