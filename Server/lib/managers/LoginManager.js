@@ -1,6 +1,5 @@
-
-var jLoginManager = function() {
+function LoginManager(){
 
 };
 
-exports.LoginManager = new jLoginManager();
+module.exoprts = new LoginManager();

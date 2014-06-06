@@ -1,19 +1,12 @@
 
 var _ = require("underscore"),
-MessageConfig = require("./message/Config").MessageConfig,
+MessageConfig = require("./message/Config"),
 MessageHandler = require("./message/Handler"),
 MessageSender = require("./message/Sender");
 
-function MessageController() {
+function MessageController(){
     this.msgDef = MessageConfig.getDefinitions();
-
-    /*
-     *
-     *
-
-     */
-}
-;
+};
 
 MessageController.prototype.init = function() {
     var _this = this;

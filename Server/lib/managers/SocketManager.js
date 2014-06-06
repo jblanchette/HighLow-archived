@@ -1,13 +1,11 @@
 
 var SocketInstance = require("../socket/Socket");
 
-var jSocketManager = function() {
+function SocketManager(){
     this.sockets = {};
 };
 
-var jp = jSocketManager.prototype;
-
-jp.add = function(ioSocket) {
+SocketManager.prototype.add = function(ioSocket) {
 
     var socket = new SocketInstance(ioSocket);
     this.sockets[socket.id] = socket;
@@ -15,4 +13,4 @@ jp.add = function(ioSocket) {
     return socket;
 }
 
-exports.SocketManager = new jSocketManager;
+module.exports = new SocketManager();
