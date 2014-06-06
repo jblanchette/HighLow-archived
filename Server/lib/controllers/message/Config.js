@@ -1,9 +1,7 @@
 var msgConfig = {
     "LOGIN": {
         "Login": "login/Login",
-        "Logout": "login/Logout",
-        "Register": "login/Register",
-        "UpdateInfo": "log/UpdateInfo"
+        "Logout": "login/Logout"
     },
 
     "CHAT": {

@@ -1,19 +1,18 @@
 var io = require('socket.io').listen(8080, {log: false}),
-_ = require('underscore');
+_ = require('underscore'),
+MessageController = require('lib/controllers/Message');
 
 var Server = {
+    
     init: function(){
-
+        io.sockets.on("connection", Server.handleConnection);
     },
 
-    setup: function(){
+    handleConnection: function(socket){
+        // @NOTE: Create security system for flooded attempts, ect.
 
-    },
-
-    handleConnection: function(){
 
     }
 };
 
 Server.init();
-io.sockets.on("connection", Server.handleConnection);
