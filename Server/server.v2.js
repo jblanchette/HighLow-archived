@@ -18,10 +18,8 @@ var Server = {
 
         var SocketInstance = SocketManager.add( socket );
 
-        SocketInstance.on("LOGIN", function(data){
-            LoginManager.login.apply(LoginManager, [data, SocketInstance]);
-        });
-
+        SocketInstance.on("LOGIN", 
+            MessageController.getHandler.apply(MessageController,["LOGIN","Login"]));
     }
 };
 

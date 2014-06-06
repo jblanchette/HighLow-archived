@@ -1,8 +1,8 @@
 
-var jSocketInstance = function(socket) {
+function SocketInstance(socket){
     this.authorized = false;
     this._socket = socket;
     return this._socket;
-};
+}
 
-exports.Socket = jSocketInstance;
+module.exports = SocketInstance;

@@ -28,6 +28,10 @@ MessageController.prototype.init = function() {
 
 };
 
+MessageController.prototype.getHandler = function( emitName, cmdName ){
+    return this.definitions[emitName][cmdName].func;
+};
+
 MessageController.prototype.handleMessage = function( socket, msg ) {
     console.log("Ran!");
 };
