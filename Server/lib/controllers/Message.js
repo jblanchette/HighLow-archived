@@ -5,21 +5,30 @@ MessageHandler = require("./message/Handler"),
 MessageSender = require("./message/Sender");
 
 function MessageController(){
-    this.msgDef = MessageConfig.getDefinitions();
+    this.ConfigDefinitions = MessageConfig.getDefinitions();
+    this.definitions = {};
 };
 
 MessageController.prototype.init = function() {
     var _this = this;
-    _.each(_this.msgDef, function(cmdObject, emitKey) {
+    var cmdObj;
+
+    _.each(_this.ConfigDefinitions, function(cmdObject, emitKey) {
+
+        _this.definitions[emitKey] = {};
 
         _.each(cmdObject, function(cmdFile, cmdName) {
-            cmdObject[cmdName].func = require(cmdFile);
+
+            cmdObj = _this.definitions[emitKey][cmdName] = {};
+            cmdObj.file = cmdFile;
+            cmdObj.func = require(cmdFile);
         });
 
     });
+
 };
 
-MessageController.prototype.handleMessage = function() {
+MessageController.prototype.handleMessage = function( socket, msg ) {
     console.log("Ran!");
 };
 
