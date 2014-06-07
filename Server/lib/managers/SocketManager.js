@@ -11,6 +11,10 @@ SocketManager.prototype.add = function(ioSocket) {
     this.sockets[socket.id] = socket;
 
     return socket;
-}
+};
+
+SocketManager.prototype.authorize = function( socketID ){
+    // bind the emits to the socket from the config skele
+};
 
 module.exports = new SocketManager();
