@@ -9,6 +9,14 @@ function MessageController(){
     MessageHandler.setDefinitions(MessageConfig.getDefinitions());
 };
 
+MessageController.prototype.getHandler = function(){
+    return MessageHandler;
+};
+
+MessageController.prototype.getSender = function(){
+    return MessageSender;
+};
+
 MessageController.prototype.handleMessage = function( socket, msg ) {
     console.log("Ran!");
 };

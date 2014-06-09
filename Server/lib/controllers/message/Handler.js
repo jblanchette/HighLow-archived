@@ -7,8 +7,8 @@ function Handler() {
 Handler.prototype.setDefinitions = function(ConfigDefinitions) {
     var _this = this;
     var cmdObj;
-
-    _.each(_this.ConfigDefinitions, function(cmdObject, emitKey) {
+    console.log("Set handler definitions!");
+    _.each(ConfigDefinitions, function(cmdObject, emitKey) {
 
         _this.definitions[emitKey] = {};
 
@@ -19,12 +19,22 @@ Handler.prototype.setDefinitions = function(ConfigDefinitions) {
         });
 
     });
+
 };
 
 Handler.prototype.exec = function( socket, emitName, emitObject ){
+    var func;
+    var _this = this;
+    console.log("*************************");
     console.log("Exec: " + emitName + " with obj: ", emitObject);
-
-    console.log("Func: ", this.definitions[emitName]);
+    if(_.has(emitObject,"action")){
+        func = this.definitions[emitName][emitObject.action].func;
+        func.apply(_this, [socket, emitObject]);
+    }
 };
 
-module.exports = new Handler();
+console.log("jHandler check:", jHandler);
+var jHandler = (jHandler || new Handler());
+console.log("jHandler after check:", jHandler);
+
+module.exports = jHandler;

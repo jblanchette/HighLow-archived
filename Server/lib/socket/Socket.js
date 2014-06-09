@@ -6,7 +6,8 @@ function SocketInstance(socket){
     this._socket = socket;
 
     this._socket.on("LOGIN", function( data ){
-        MessageHandler.exec.apply(MessageHandler, [_this.socket, "LOGIN", data]);
+        console.log("Handler: ", MessageHandler);
+        MessageHandler.exec.apply(MessageHandler, [_this._socket.id, "LOGIN", data]);
     });
 
     return this._socket;

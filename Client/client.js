@@ -1,5 +1,5 @@
-define(['require', 'socketio', 'underscore', 'chatmanager', 'jquery', 'msg'],
-function(require, io, _, ChatManager, $, jMsg) {
+define(['require', 'socketio', 'underscore', 'chatmanager', 'jquery'],
+function(require, io, _, ChatManager, $) {
 
     var Client = {
         debug : true,
@@ -25,12 +25,6 @@ function(require, io, _, ChatManager, $, jMsg) {
 
         init : function() {
             console.log("Initalized Client");
-
-            var jTest = new jMsg();
-
-            console.log("JTest: ", jTest);
-
-            return;
 
             _this = this;
             _.map(this.domElements, function(el) {
@@ -212,6 +206,7 @@ function(require, io, _, ChatManager, $, jMsg) {
             var _pass = this.getDom("loginPass").value;
 
             var LoginObject = {
+                action: "Login",
                 user : _user,
                 pass : _pass
             }

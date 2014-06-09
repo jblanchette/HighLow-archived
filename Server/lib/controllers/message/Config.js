@@ -3,15 +3,15 @@ function MessageConfig() {
 
     this.definitions = {
         "LOGIN" : {
-            "Login" : "./login/Login",
-            "Logout" : "./login/Logout"
+            "Login" : "./../login/Login",
+            "Logout" : "./../login/Logout"
         },
         "CHAT" : {
-            "Join" : "./chat/Join",
-            "Leave" : "./chat/Leave",
-            "Make" : "./chat/Make",
-            "NewMsg" : "./chat/NewMsg",
-            "SpecialFunc" : "./chat/SpecialFunc"
+            "Join" : "./../chat/Join",
+            "Leave" : "./../chat/Leave",
+            "Make" : "./../chat/Make",
+            "NewMsg" : "./../chat/NewMsg",
+            "SpecialFunc" : "./../chat/SpecialFunc"
         }
     };
 
