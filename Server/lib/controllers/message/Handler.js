@@ -4,6 +4,10 @@ function Handler() {
     this.definitions = {};
 }
 
+Handler.prototype.getDefinitions = function(){
+    return this.definitions;
+}
+
 Handler.prototype.setDefinitions = function(ConfigDefinitions) {
     var _this = this;
     var cmdObj;
@@ -30,11 +34,10 @@ Handler.prototype.exec = function( socket, emitName, emitObject ){
     if(_.has(emitObject,"action")){
         func = this.definitions[emitName][emitObject.action].func;
         func.apply(_this, [socket, emitObject]);
+    }else{
+        console.log("*** ERROR *** could not find action in emitObject");
     }
 };
 
-console.log("jHandler check:", jHandler);
 var jHandler = (jHandler || new Handler());
-console.log("jHandler after check:", jHandler);
-
 module.exports = jHandler;

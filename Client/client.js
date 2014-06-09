@@ -184,7 +184,7 @@ function(require, io, _, ChatManager, $) {
                 this.debugMsg("Asking server to join chat.");
 
                 var ChatObject = {
-                    type : "JOIN",
+                    action : "Join",
                     roomName : "ANY"
                 };
 

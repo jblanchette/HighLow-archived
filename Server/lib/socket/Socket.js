@@ -5,11 +5,6 @@ function SocketInstance(socket){
     this.authorized = false;
     this._socket = socket;
 
-    this._socket.on("LOGIN", function( data ){
-        console.log("Handler: ", MessageHandler);
-        MessageHandler.exec.apply(MessageHandler, [_this._socket.id, "LOGIN", data]);
-    });
-
     return this._socket;
 }
 
