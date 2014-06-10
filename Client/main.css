@@ -7,6 +7,19 @@ body { font-family: Verdana; }
     vertical-align: top;
 }
 
+.emitNameHolder {
+    display: inline-block;
+    width: 200px;
+    border: 1px solid #FF0000;
+    vertical-align: top;
+    display: none;
+}
+#d_actionHolder {
+    width: 200px;
+    border: 1px solid #333;
+    display: inline-block;
+}
+
 #controls h3 {
     margin: 2px;
 }

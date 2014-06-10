@@ -12,6 +12,7 @@ function(require, io, _, ChatManager, $) {
         nickname : "",
         isAdmin : false,
         emitQueue : [],
+        outgoingDef: {},
         socket : null,
         events : {
             'LOGIN' : 'handleLogin',
@@ -23,9 +24,69 @@ function(require, io, _, ChatManager, $) {
             'A': ChatManager.handleMessage
         },
 
+        setupDebug: function(){
+            var _this = this;
+            this.outgoingDef = {
+                "LOGIN" : {
+                    "Login": ['user','pass'],
+                    "Logout": ['user']
+                },
+                "CHAT" : {
+                    "Join":   ['roomID'],
+                    "Leave":  ['roomID'],
+                    "Make":   ['roomName', 'roomOptions'],
+                    "NewMsg": ['roomID', 'message'],
+                    "Func":   ['funcID', 'funcData']
+                }
+            };
+
+            var out = "<div id='d_actionHolder'>";
+            out += "Actions:<br><select id='d_emitName'>";
+
+            var defValues = _.values(this.outgoingDef);
+
+            var actionObj = {};
+
+            _.each(this.outgoingDef, function(emitObj, emitName){
+                out += "<option value='0'>----" + emitName + "</option>";
+                _.each(_.keys(emitObj), function (action){
+                    out += "<option value='" + emitName +"'>" + action + "</option>";
+                });
+            });
+            out += "</select><br> </div>";
+
+
+            _.each(defValues, function (emitObj){
+
+                _.each(emitObj, function( emitList, action){
+                    out += "<div id='d_name_" + action + "' class='emitNameHolder'>";
+
+                    out += emitList.join();
+
+                    out += "</div>";
+
+                });
+
+            });
+
+            $("#debugHolder").html(out);
+
+            var _this = this;
+
+            $("#d_emitName").change(function(){
+                var obj = $(this).children(':selected');
+                var emitAction = obj.text();
+                $('.emitNameHolder').hide();
+                $('#d_name_' + emitAction).show();
+
+                $('#debugEmitName').val(obj.val());
+                $('#debugText').val('{\n action: "' + emitAction + '",\n \n}');
+            });
+        },
+
         init : function() {
             console.log("Initalized Client");
-
+            this.setupDebug();
             _this = this;
             _.map(this.domElements, function(el) {
                 _this.elements[el] = document.getElementById(el);
@@ -70,7 +131,19 @@ function(require, io, _, ChatManager, $) {
                 Client.refreshList();
             });
 
+            $('#debugButton').click(function(){
+                Client.sendDebug();
+            });
 
+
+        },
+
+        sendDebug: function(){
+            var emitName = $('#debugEmitName').val();
+            var emitVal = $('#debugText').val();
+            var emitObj = eval('(' + emitVal + ')');
+            console.log("sending ", emitName, emitObj);
+            this.queue(emitName, emitObj);
         },
 
         refreshList: function(){
@@ -129,6 +202,7 @@ function(require, io, _, ChatManager, $) {
             this.socket.on('disconnect', function() {
                 console.log(_this.socket.socket);
             });
+
 
         },
         clearQueue : function() {

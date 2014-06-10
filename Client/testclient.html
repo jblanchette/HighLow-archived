@@ -64,13 +64,17 @@ and open the template in the editor.
         </div>
 
         <div id="lobby">
-            <div id="lobbyTabs">
+            <div id="lobbyTabs" style="display: none">
                 <ul>
                     <li>Test</li>
                 </ul>
             </div>
             <div id="lobbyHolder">
-
+                <div id="debugHolder"></div> <br>
+                <textarea id="debugText" rows="30" cols="60" ></textarea> <br>
+                Emit Name:
+                <input type="text" id="debugEmitName"> <br>
+                <input type="button" id="debugButton" value="Send Debug Object" />
             </div>
         </div>
     </body>
