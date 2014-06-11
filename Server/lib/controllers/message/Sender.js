@@ -3,7 +3,11 @@ var _ = require("underscore"),
     SocketManager = require("./../../managers/SocketManager");
 
 function Sender() {
+    this.io = null;
+}
 
+Sender.prototype.setIO = function(io){
+    this.io = io;
 }
 
 /**
@@ -33,7 +37,7 @@ Sender.prototype.send = function( socketID, emitName, emitObject ){
 
 Sender.prototype.emit = function( roomName, emitName, emitObject ){
     console.log("Sender.emit: ", emitName, emitObject);
-    io.sockets.in(roomName).emit(emitName, emitObject);
+    this.io.sockets.in(roomName).emit(emitName, emitObject);
 };
 
 var jSender = (jSender || new Sender());

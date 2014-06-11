@@ -11,7 +11,7 @@ function MessageConfig() {
             "Leave" : "./../chat/Leave",
             "Make" : "./../chat/Make",
             "NewMsg" : "./../chat/NewMsg",
-            "Func" : "./../chat/SpecialFunc"
+            "Func" : "./../chat/Func"
         }
     };
 

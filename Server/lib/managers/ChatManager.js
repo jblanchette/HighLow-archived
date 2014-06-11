@@ -1,5 +1,6 @@
 var _ = require("underscore"),
-    ChatLobby = require("../chat/Lobby");
+    ChatLobby = require("../chat/Lobby"),
+    Util = require("../util/Util");
 
 function ChatManager(){
     this.rooms = {};

@@ -2,12 +2,12 @@ var MessageSender = require("../message/Sender"),
     ClientManager = require("../../managers/ClientManager"),
     ChatManager = require("../../managers/ChatManager");
 
-function Leave(){
+function Func(){
 
 }
 
-Leave.prototype.randomfunc = function(){
+Func.prototype.randomfunc = function(){
 
 };
 
-module.exports = Leave;
+module.exports = Func;

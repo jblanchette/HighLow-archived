@@ -10,6 +10,9 @@ var Server = {
     init: function(){
         console.log("Setting up socket.io conn handler");
         io.sockets.on("connection", Server.handleConnection);
+
+        MessageController.getSender().setIO(io);
+
         ChatManager.create(-1, "Main Chat");
     },
 

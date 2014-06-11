@@ -7,6 +7,7 @@ var _ = require("underscore"),
 function Client( socket ){
 
     this.id = -1;
+    this.nickname = "";
     // To save memory on bad logins or attacks, clients are only
     // a boolean for authorized until they become authorized.
     this.authorized = false;
@@ -39,6 +40,8 @@ Client.prototype.authorize = function(){
 
     // For now we just assign a random id, but it'll be a database id
     this.id = Util.generateID();
+    this.nickname = "Client-" + this.id;
+    
     // Setup socket emit handlers
     _.each(emitKeys, function( emitKey ) {
         _this.addHandler( emitKey );
