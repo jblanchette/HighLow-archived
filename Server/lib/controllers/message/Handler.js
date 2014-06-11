@@ -33,7 +33,17 @@ Handler.prototype.exec = function( socket, emitName, emitObject ){
     console.log("Exec: " + emitName + " with obj: ", emitObject);
     if(_.has(emitObject,"action")){
         func = this.definitions[emitName][emitObject.action].func;
-        func.apply(_this, [socket, emitObject]);
+
+        // If a function takes one argument, it only wants the data,
+        // otherwise takes two arguments  Wit also requires the socket.
+
+        // Function.length returns how many arguments a function expects.
+        if(func.length === 1){
+            func.call(_this, emitObject);
+        }else{
+            func.apply(_this, [socket, emitObject]);
+        }
+        
     }else{
         console.log("*** ERROR *** could not find action in emitObject");
     }

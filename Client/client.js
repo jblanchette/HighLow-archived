@@ -259,7 +259,7 @@ function(require, io, _, ChatManager, $) {
 
                 var ChatObject = {
                     action : "Join",
-                    roomName : "ANY"
+                    roomID : "ANY"
                 };
 
                 this.socket.emit("CHAT", ChatObject);

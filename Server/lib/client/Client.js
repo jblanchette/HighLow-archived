@@ -1,9 +1,12 @@
 var _ = require("underscore"),
     ClientData = require("./Client.Data"),
     SocketManager = require("../managers/SocketManager"),
-    MessageHandler = require("../controllers/message/Handler");
+    MessageHandler = require("../controllers/message/Handler"),
+    Util = require("../util/Util");
 
 function Client( socket ){
+
+    this.id = -1;
     // To save memory on bad logins or attacks, clients are only
     // a boolean for authorized until they become authorized.
     this.authorized = false;
@@ -14,12 +17,16 @@ function Client( socket ){
 
 };
 
+Client.prototype.getSocket = function(){
+    return this.socket;
+};
+
 Client.prototype.addHandler = function(emitName){
     var _this = this;
     this.socket.on(emitName , function( data ){
         MessageHandler.exec.apply(MessageHandler, [_this.socket.id, emitName, data]);
     });
-}
+};
 
 Client.prototype.authorize = function(){
     var _this = this;
@@ -28,8 +35,11 @@ Client.prototype.authorize = function(){
     this.authorized = true;
 
     // Now setup the extra information about the Client
-
     console.log("Authorizing client");
+
+    // For now we just assign a random id, but it'll be a database id
+    this.id = Util.generateID();
+    // Setup socket emit handlers
     _.each(emitKeys, function( emitKey ) {
         _this.addHandler( emitKey );
     });
