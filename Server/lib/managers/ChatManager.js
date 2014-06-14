@@ -23,7 +23,8 @@ ChatManager.prototype.create = function( roomOwner, roomOptions ){
 
     this.rooms[roomID] = new ChatLobby( roomID, roomOwner, roomOptions);
 
-    console.log("Rooms: ", this.rooms);
+    return this.rooms[roomID];
+    
 };
 
 ChatManager.prototype.get = function(roomID){
@@ -34,6 +35,11 @@ ChatManager.prototype.get = function(roomID){
 
     return this.rooms[roomID];
 }
+
+ChatManager.prototype.removeFromRoom = function ( roomID, client ){
+    var Lobby = this.get(roomID);
+    Lobby.remove(client);
+};
 
 ChatManager.prototype.addToRoom = function( roomID, client ){
     var Lobby = this.get(roomID);

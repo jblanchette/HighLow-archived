@@ -34,8 +34,8 @@ function(require, io, _, ChatManager, $) {
                 "CHAT" : {
                     "Join":   ['roomID'],
                     "Leave":  ['roomID'],
-                    "Make":   ['roomName', 'roomOptions'],
-                    "NewMsg": ['roomID', 'message'],
+                    "Make":   ['roomOptions'],
+                    "NewMsg": ['roomID', 'data (Object [timestamp, authorID, message)'],
                     "Func":   ['funcID', 'funcData']
                 }
             };

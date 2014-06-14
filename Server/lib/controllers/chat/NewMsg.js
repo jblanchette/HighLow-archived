@@ -1,13 +1,9 @@
 var MessageSender = require("../message/Sender"),
-    ClientManager = require("../../managers/ClientManager"),
     ChatManager = require("../../managers/ChatManager");
 
-function NewMsg(){
-
+function NewMsg( msg ){
+    var Lobby = ChatManager.get(msg.roomID);
+    Lobby.addMessage( msg.data );
 }
-
-NewMsg.prototype.randomfunc = function(){
-
-};
 
 module.exports = NewMsg;

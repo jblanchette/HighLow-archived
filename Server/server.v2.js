@@ -8,11 +8,13 @@ LoginManager = require('./lib/managers/LoginManager');
 var Server = {
 
     init: function(){
+
         console.log("Setting up socket.io conn handler");
         io.sockets.on("connection", Server.handleConnection);
 
         MessageController.getSender().setIO(io);
 
+        // Create server owned chat room
         ChatManager.create(-1, "Main Chat");
     },
 

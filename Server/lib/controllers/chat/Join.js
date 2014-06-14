@@ -8,7 +8,6 @@ function Join( socketID, msg ){
     }
 
     var nClient = ClientManager.get(socketID);
-
     ChatManager.addToRoom( msg.roomID, nClient);
 }
 
