@@ -1,12 +1,21 @@
-define(['socketio', 'underscore', 'jquery', "lib/controllers/message/Handler"],
- function(io, _, $, MessageHandler){
+define(['socketio', 'underscore', 'jquery', "Data", "Handler"],
+ function(io, _, $, ClientData, MessageHandler){
     function Client(){
         this.socket = null;
     };
 
     Client.prototype.init = function(){
         console.log("Handler: ", MessageHandler);
+        console.log("Data: ", ClientData);
+        this.setupUI();
     };
+
+    Client.prototype.setupUI = function(){
+        var _ClientScope = this;
+        $("#button_login").click(function(){
+            _ClientScope.connect();
+        });
+    }
 
 
 
@@ -16,8 +25,8 @@ define(['socketio', 'underscore', 'jquery', "lib/controllers/message/Handler"],
 
         this.socket = io.connect("http://localhost:8080");
 
-        this.socket.on('connect', Client.onConnect.bind(this));
-        this.socket.on('disconnect', Client.onDisconnect.bind(this));
+        this.socket.on('connect', _this.onConnect.bind(this));
+        this.socket.on('disconnect', _this.onDisconnect.bind(this));
     };
 
     Client.prototype.onConnect = function(){

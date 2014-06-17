@@ -9,6 +9,7 @@ define(["underscore"], function(_) {
     }
 
     Handler.prototype.setDefinitions = function(ConfigDefinitions) {
+        
         var _this = this;
         var cmdObj;
         console.log("Set handler definitions!");
