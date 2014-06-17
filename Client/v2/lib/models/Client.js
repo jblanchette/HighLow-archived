@@ -16,6 +16,8 @@ define(['underscore', 'BaseModel'], function(_, BaseModel) {
         };
 
         Model.defaults(defaultObject);
+
+        return Model;
     }
 
 
