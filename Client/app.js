@@ -1,6 +1,6 @@
 // Start the main app logic.
-requirejs(['socketio', 'underscore','client','chatlobby'],
-    function( io, _ , Client, ChatLobby ) {
+requirejs(['client'],
+    function(Client) {
         Client.init();
     }
 );

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>HL Client</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script type="text/javascript" src='config.js'></script>
+        <script data-main="app" src="require.js"></script>
+
+         <link rel="stylesheet" href="main.css" type="text/css">
+
+    </head>
+    <body>
+        <div id="devtools">
+            <div id="controls">
+                <h3>Controls</h3>
+                User: <input type="text" id="loginUser" value="test"> <br>
+                Pass: <input type="text" id="loginPass" value="test"> <br>
+                <input type="button" id="button_login" value="Login">
+                <input type="button" id="button_joinChat" value="Join Chat">
+                <hr>
+                Make Chat Room: <br>
+                <input type="text" id="makeChat_name"  onclick="this.value=''" value="Room Name"> <br>
+                <input type="button" id="button_makeChat" value="Make and Join">
+                <hr>
+
+                Join Chat Room: <br>
+
+
+                <select id="joinChat_list">
+
+                </select><br>
+                <input type="button" id="button_joinRoom" value="Join Selected">
+                <br>
+                <input type="button" id="button_refreshList" value="Refresh List">
+                <br>
+            </div>
+
+            <div id="adminControls">
+                Kick User: <br>
+                <input type="text" id="adminInput" value="Nickname...">
+                <input type="button" id="button_kickUser" value="Kick"> <br>
+            </div>
+
+            <div id="messages">
+                <h3>Messages</h3>
+
+            </div>
+
+            <div id="status">
+                <h3>Status</h3>
+                Connected: <span id="connected">False</span> <br>
+                Logged In: <span id="logged_in">False</span> <br>
+
+                Chat Status: <br>
+                -Room: <span id="room_name"></span> <br>
+            </div>
+
+        </div>
+
+        <div id="lobby">
+            <div id="lobbyTabs" style="display: none">
+                <ul>
+                    <li>Test</li>
+                </ul>
+            </div>
+            <div id="lobbyHolder">
+                <div id="debugHolder"></div> <br>
+                <textarea id="debugText" rows="30" cols="60" ></textarea> <br>
+                Emit Name:
+                <input type="text" id="debugEmitName"> <br>
+                <input type="button" id="debugButton" value="Send Debug Object" />
+            </div>
+        </div>
+    </body>
+</html>
