@@ -1,6 +1,6 @@
 var _ = require("underscore"),
     ClientInstance = require("../client/Client");
-
+    
 function ClientManager(){
     this.clients = {};
 }

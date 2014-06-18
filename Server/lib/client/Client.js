@@ -14,19 +14,12 @@ function Client( socket ){
 
     // Clients only have the LOGIN handler functions before authorization
     this.socket = SocketManager.add(socket);
-    this.addHandler("LOGIN");
+    MessageHandler.setupLoginHandler( socket );
 
 };
 
 Client.prototype.getSocket = function(){
     return this.socket;
-};
-
-Client.prototype.addHandler = function(emitName){
-    var _this = this;
-    this.socket.on(emitName , function( data ){
-        MessageHandler.exec.apply(MessageHandler, [_this.socket.id, emitName, data]);
-    });
 };
 
 Client.prototype.authorize = function(){
@@ -41,15 +34,9 @@ Client.prototype.authorize = function(){
     // For now we just assign a random id, but it'll be a database id
     this.id = Util.generateID();
     this.nickname = "Client-" + this.id;
-    
-    // Setup socket emit handlers
-    _.each(emitKeys, function( emitKey ) {
-        _this.addHandler( emitKey );
-    });
 
-    // @NOTE: I figured we could leave some room to implement the ORM
-    //        or just have a simple data adapater here so games /plugins
-    //        can access client data.
+    // Setup socket emit handlers
+    MessageHandler.setupClientHandlers( this.socket );
 
     this.data = new ClientData();
 };

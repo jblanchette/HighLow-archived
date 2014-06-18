@@ -30,15 +30,12 @@ define(["underscore", "MessageConfig"], function(_, MessageConfig) {
     Handler.prototype.setup = function( socket ){
         var _this = this;
 
-        _.each(this.definitions, function( cmdObject, emitName){
-           _.each(cmdObject, function( actionObject, actionName){
-
-                socket.on(emitName, function(data) {
-                    _this.exec.apply(_this,
-                        [emitName, data]);
-                });
-
-           });
+        _.each(this.definitions, function(cmdObject, emitName) {
+            socket.on(emitName, function(data) {
+                console.log("CALLING EXEC ON ", emitName, data);
+                _this.exec.apply(_this,
+                [emitName, data]);
+            });
         });
 
         console.log("Handler emit bind setup complete.");

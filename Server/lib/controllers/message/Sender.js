@@ -28,7 +28,7 @@ Sender.prototype.send = function( socketID, emitName, emitObject ){
 
     if(socket !== undefined){
 
-        console.log("Sending from socket: ", socket);
+        console.log("Sending from socket: ", socket.id);
         socket.emit(emitName, emitObject);
         return true;
     }else{

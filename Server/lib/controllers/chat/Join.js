@@ -3,6 +3,7 @@ var MessageSender = require("../message/Sender"),
     ChatManager = require("../../managers/ChatManager");
 
 function Join( socketID, msg ){
+    
     if(msg.roomID === "ANY"){
         msg.roomID = ChatManager.getVacantLobby();
     }
