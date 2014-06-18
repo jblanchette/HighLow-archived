@@ -1,4 +1,4 @@
-define(['Data'], function(Data) {
+define([], function() {
     function Join(msg) {
         console.log("Ran Join: ", msg);
     }

@@ -1,29 +1,30 @@
-define(["require","underscore", "MessageConfig"],
- function(require, _, MessageConfig) {
+define(["require", "underscore"],
+function(require, _) {
 
     function Handler() {
+
         this.definitions = {};
+
+        this.ConfigDefinitions = {
+            "LOGIN": ["Login", "Logout"],
+            "CHAT": ["Join", "Leave", "Make", "NewMsg", "Func"]
+        };
     }
 
     Handler.prototype.preload = function() {
-        var ConfigDefinitions = MessageConfig.getDefinitions();
 
         var _this = this;
         var cmdObj;
 
-        _.each(ConfigDefinitions, function(cmdObject, emitKey) {
+        _.each(this.ConfigDefinitions, function(cmdList, emitKey) {
 
             _this.definitions[emitKey] = {};
 
-            _.each(cmdObject, function(cmdFile, cmdName) {
-                cmdObj = _this.definitions[emitKey][cmdName] = {};
-                cmdObj.file = cmdFile;
+            _.each(cmdList, function(cmdName) {
+                _this.definitions[emitKey][cmdName] = function(){};
 
-                // We need to do an async callback require here
-                // otherwise the module wont be loaded yet.
-                
-                require(["LOGIN/Login"], function(func){
-                    _this.definitions[emitKey][cmdName].func = func;
+                require([emitKey + "/" + cmdName], function(func) {
+                    _this.definitions[emitKey][cmdName] = func;
                 });
             });
 
@@ -39,11 +40,9 @@ define(["require","underscore", "MessageConfig"],
     Handler.prototype.setup = function(socket) {
         var _this = this;
 
-        _.each(this.definitions, function(cmdObject, emitName) {
+        _.each(_.keys(this.ConfigDefinitions), function(emitName) {
             socket.on(emitName, function(data) {
-                console.log("Cmd Obj: ", cmdObject, "Emit Name: ", emitName);
-                _this.exec.apply(_this,
-                [emitName, data]);
+                _this.exec.apply(_this, [emitName, data]);
             });
         });
 
@@ -57,7 +56,7 @@ define(["require","underscore", "MessageConfig"],
         console.log("Exec: " + emitName + " with obj: ", emitObject);
 
         if (_.has(emitObject, "action")) {
-            func = this.definitions[emitName][emitObject.action].func;
+            func = this.definitions[emitName][emitObject.action];
 
             console.log("Action: ", emitObject.action);
             console.log("Func: ", func);

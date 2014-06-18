@@ -35,7 +35,6 @@ Handler.prototype.setupLoginHandler = function ( socket ){
     console.log("Setting Login Handler for ", socket.id);
     var _this = this;
     socket.on("LOGIN", function( data ){
-        console.log("Login Handler this: ", _this, data);
         _this.exec.apply(_this, [ socket, "LOGIN", data]);
     });
 };
@@ -52,6 +51,7 @@ Handler.prototype.exec = function(socket, emitName, emitObject) {
     if (_.has(emitObject, "action")) {
         func = this.definitions[emitName][emitObject.action];
 
+        console.log("Func: ", func);
         // If a function takes one argument, it only wants the data,
         // otherwise takes two arguments  Wit also requires the socket.
 
