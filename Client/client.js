@@ -65,15 +65,6 @@ define(['socketio', 'underscore', 'jquery', "Handler", "Sender", "ClientModel"],
         console.log("Disconnected: ", arguments);
     };
 
-    Client.prototype.addHandler = function(emitName) {
-        var _this = this;
-        this.socket.on(emitName, function(data) {
-            MessageHandler.exec.apply(MessageHandler, [emitName, data]);
-        });
-    };
-
-
-
     var jClient = (jClient || new Client());
     return jClient;
 });
