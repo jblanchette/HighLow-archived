@@ -6,12 +6,14 @@ define(['socketio', 'underscore', 'jquery', "Handler", "Sender", "ClientModel"],
     };
 
     Client.prototype.init = function(){
-        console.log("Handler: ", MessageHandler);
         MessageHandler.preload();
         this.setupUI();
     };
 
     Client.prototype.setupUI = function(){
+
+        // for now hook up a few buttons
+
         var _ClientScope = this;
         $("#button_connect").click(function(){
             _ClientScope.connect();
@@ -26,9 +28,7 @@ define(['socketio', 'underscore', 'jquery', "Handler", "Sender", "ClientModel"],
         console.log("UI setup complete.");
     };
 
-    // @TODO: ***Possibly just use an event from the UI for things such as this.
-    //        This is really just for testing/client purposes. Should be
-    //         looked into. ***
+    // @NOTE: Temporary code for testing. Will be performed by UI events.
     Client.prototype.login = function( _user, _pass ){
         var LoginObject = {
             action: "Login",
@@ -41,15 +41,10 @@ define(['socketio', 'underscore', 'jquery', "Handler", "Sender", "ClientModel"],
 
     };
 
-
-
     Client.prototype.connect = function(){
         console.log("Connecting...");
-        // connect, setup handler and sender
         var _this = this;
-
         this.socket = io.connect("http://localhost:8080");
-
         this.socket.on('connect', _this.onConnect.bind(this));
         this.socket.on('disconnect', _this.onDisconnect.bind(this));
     };
