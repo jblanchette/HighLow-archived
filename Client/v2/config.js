@@ -9,6 +9,7 @@ var require = {
         "MessageConfig": './lib/controllers/message/Config',
         "Data": './lib/data/data',
         "BaseModel": './lib/models/Base',
-        "ClientModel": './lib/models/Client'
+        "ClientModel": './lib/models/Client',
+        "LOGIN/Login": './lib/controllers/login/Login'
     }
 };

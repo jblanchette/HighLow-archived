@@ -5,7 +5,7 @@ define([], function() {
 
         this.definitions = {
             "LOGIN" : {
-                "Login" : "./../login/Login",
+                "Login" : "../login/Login",
                 "Logout" : "./../login/Logout"
             },
             "CHAT" : {

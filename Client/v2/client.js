@@ -6,6 +6,8 @@ define(['socketio', 'underscore', 'jquery', "Handler", "Sender", "ClientModel"],
     };
 
     Client.prototype.init = function(){
+        console.log("Handler: ", MessageHandler);
+        MessageHandler.preload();
         this.setupUI();
     };
 
