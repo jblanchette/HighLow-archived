@@ -1,18 +1,12 @@
-define(["underscore"], function(_) {
+define(["underscore", "MessageConfig"], function(_, MessageConfig) {
 
     function Handler() {
         this.definitions = {};
-    }
+        var ConfigDefinitions = MessageConfig.getDefinitions();
 
-    Handler.prototype.getDefinitions = function() {
-        return this.definitions;
-    }
-
-    Handler.prototype.setDefinitions = function(ConfigDefinitions) {
-        
         var _this = this;
         var cmdObj;
-        console.log("Set handler definitions!");
+
         _.each(ConfigDefinitions, function(cmdObject, emitKey) {
 
             _this.definitions[emitKey] = {};
@@ -20,31 +14,45 @@ define(["underscore"], function(_) {
             _.each(cmdObject, function(cmdFile, cmdName) {
                 cmdObj = _this.definitions[emitKey][cmdName] = {};
                 cmdObj.file = cmdFile;
-                cmdObj.func = require(cmdFile);
+                cmdObj.func = function(){}; //require(cmdFile);
             });
 
         });
 
+        console.log("Handler setup complete.");
+
+    }
+
+    Handler.prototype.getDefinitions = function() {
+        return this.definitions;
+    }
+
+    Handler.prototype.setup = function( socket ){
+        var _this = this;
+
+        _.each(this.definitions, function( cmdObject, emitName){
+           _.each(cmdObject, function( actionObject, actionName){
+
+                socket.on(emitName, function(data) {
+                    _this.exec.apply(_this,
+                        [emitName, data]);
+                });
+
+           });
+        });
+
+        console.log("Handler emit bind setup complete.");
     };
 
-    Handler.prototype.exec = function(socket, emitName, emitObject) {
+    Handler.prototype.exec = function(emitName, emitObject) {
         var func;
         var _this = this;
         console.log("*************************");
         console.log("Exec: " + emitName + " with obj: ", emitObject);
+
         if (_.has(emitObject, "action")) {
             func = this.definitions[emitName][emitObject.action].func;
-
-            // If a function takes one argument, it only wants the data,
-            // otherwise takes two arguments  Wit also requires the socket.
-
-            // Function.length returns how many arguments a function expects.
-            if (func.length === 1) {
-                func.call(_this, emitObject);
-            } else {
-                func.apply(_this, [socket, emitObject]);
-            }
-
+            func.call(_this, emitObject);
         } else {
             console.log("*** ERROR *** could not find action in emitObject");
         }

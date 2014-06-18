@@ -5,7 +5,6 @@ define(['underscore'], function(_){
 
    Model.prototype.defaults = function( defaultObject ){
        _.defaults(this.data, defaultObject);
-       console.log("Model Defaults: ", this.data);
    };
 
    Model.prototype.set = function(key, value){
@@ -16,5 +15,5 @@ define(['underscore'], function(_){
        return this.data[key];
    };
 
-
+   return Model;
 });

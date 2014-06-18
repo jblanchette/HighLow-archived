@@ -25,7 +25,10 @@ Sender.prototype.setIO = function(io){
 Sender.prototype.send = function( socketID, emitName, emitObject ){
     console.log("Sender.send: ", socketID, emitName, emitObject);
     var socket = SocketManager.get(socketID);
+
     if(socket !== undefined){
+
+        console.log("Sending from socket: ", socket);
         socket.emit(emitName, emitObject);
         return true;
     }else{

@@ -20,6 +20,7 @@ define(['underscore', 'BaseModel'], function(_, BaseModel) {
         return Model;
     }
 
+    var jClientModel = (jClientModel || new ClientModel());
 
-    return ClientModel;
+    return jClientModel;
 });

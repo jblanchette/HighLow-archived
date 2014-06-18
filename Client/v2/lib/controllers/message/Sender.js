@@ -1,16 +1,20 @@
-define(["underscore"], function(_) {
+define([], function() {
 
-    function Sender() {
-
+    function Sender( socket ) {
+        this.socket = null;
     }
 
-    Sender.prototype.emit = function(roomName, emitName, emitObject) {
-        console.log("Sender.emit: ", emitName, emitObject);
-        this.io.sockets.in(roomName).emit(emitName, emitObject);
+    Sender.prototype.setup = function( socket ){
+        this.socket = socket;
+    };
+
+    Sender.prototype.emit = function(emitName, emitObject) {
+        console.log("Client Sender.emit: ", emitName, emitObject);
+        this.socket.emit(emitName, emitObject);
     };
 
     var jSender = (jSender || new Sender());
 
-    module.exports = jSender;
+    return jSender;
 
 });

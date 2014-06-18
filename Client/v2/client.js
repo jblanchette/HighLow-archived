@@ -1,25 +1,48 @@
-define(['socketio', 'underscore', 'jquery', "Data", "Handler"],
- function(io, _, $, ClientData, MessageHandler){
+define(['socketio', 'underscore', 'jquery', "Handler", "Sender", "ClientModel"],
+ function(io, _, $, MessageHandler, MessageSender, ClientModel){
     function Client(){
         this.socket = null;
+        this.model = ClientModel;
     };
 
     Client.prototype.init = function(){
-        console.log("Handler: ", MessageHandler);
-        console.log("Data: ", ClientData);
         this.setupUI();
     };
 
     Client.prototype.setupUI = function(){
         var _ClientScope = this;
-        $("#button_login").click(function(){
+        $("#button_connect").click(function(){
             _ClientScope.connect();
         });
-    }
+
+        $("#button_login").click(function(){
+           var user = $("#loginUser").val();
+           var pass = $("#loginPass").val();
+
+           _ClientScope.login( user, pass );
+        });
+        console.log("UI setup complete.");
+    };
+
+    // @TODO: ***Possibly just use an event from the UI for things such as this.
+    //        This is really just for testing/client purposes. Should be
+    //         looked into. ***
+    Client.prototype.login = function( _user, _pass ){
+        var LoginObject = {
+            action: "Login",
+            user: _user,
+            pass: _pass,
+        };
+
+        console.log("Sending Login Object: ", LoginObject);
+        MessageSender.emit("LOGIN", LoginObject);
+
+    };
 
 
 
     Client.prototype.connect = function(){
+        console.log("Connecting...");
         // connect, setup handler and sender
         var _this = this;
 
@@ -30,7 +53,10 @@ define(['socketio', 'underscore', 'jquery', "Data", "Handler"],
     };
 
     Client.prototype.onConnect = function(){
-        console.log("Connected: ", arguments);
+        console.log("Connected. Setting handler binds.");
+        MessageHandler.setup(this.socket);
+        console.log("Setting Sender socket.");
+        MessageSender.setup(this.socket);
     };
 
     Client.prototype.onDisconnect = function(){

@@ -6,8 +6,9 @@ var require = {
         "client": 'client',
         "Handler": './lib/controllers/message/Handler',
         "Sender": './lib/controllers/message/Sender',
-        "MsgConfig": './lib/controllers/message/Config',
+        "MessageConfig": './lib/controllers/message/Config',
         "Data": './lib/data/data',
-        "BaseModel", './lib/models/Base'
+        "BaseModel": './lib/models/Base',
+        "ClientModel": './lib/models/Client'
     }
 };
