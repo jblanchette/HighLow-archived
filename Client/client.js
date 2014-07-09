@@ -1,5 +1,7 @@
-define(['socketio', 'underscore', 'jquery', "Handler", "Sender", "ClientModel"],
- function(io, _, $, MessageHandler, MessageSender, ClientModel){
+define(
+ ["socketio", "underscore", "jquery",
+  "Handler", "Sender", "ClientModel","mongoose"],
+ function(io, _, $, MessageHandler, MessageSender, ClientModel, mongoose){
     function Client(){
         this.socket = null;
         this.model = ClientModel;
