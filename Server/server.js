@@ -20,13 +20,11 @@ var Server = {
         // Create server owned chat room
         ChatManager.create(-1, "Main Chat");
         console.log("Connecting to MongoDB");
+        
         mongoose.connect('mongodb://localhost/test');
-        console.log("Query User collection...");
-        var Users = require("./lib/models/User");
-        Users.create({nickname: "Jeff", permissions: "ALL", rank: 1}, function(err, user){
-            console.log("Err:", err);
-            console.log("User:", user);
-        });
+
+
+
 
     },
 
