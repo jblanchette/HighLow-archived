@@ -47,11 +47,10 @@ Handler.prototype.exec = function(socket, emitName, emitObject) {
     var func;
     var _this = this;
     console.log("*************************");
-    console.log("Exec: " + emitName + " with obj: ", emitObject);
+    console.log("Exec: " + emitName + " with action: ", emitObject.action);
     if (_.has(emitObject, "action")) {
         func = this.definitions[emitName][emitObject.action];
 
-        console.log("Func: ", func);
         // If a function takes one argument, it only wants the data,
         // otherwise takes two arguments  Wit also requires the socket.
 

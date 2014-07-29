@@ -69,12 +69,19 @@ function(io, _, $, MessageHandler, MessageSender, ClientModel) {
 
     jClient.runQueue = function() {
         var _this = this;
+        var action;
 
-        if (jClient.connected()) {
-            _.each(this.actions, function(action) {
-                action.apply(_this, null);
-            });
-        }
+            while(this.actions.length > 0){
+                if (jClient.connected()) {
+                    action = this.actions.shift();
+                    if(_.isFunction(action)){
+                        action.apply(_this, null);
+                    }
+                }else{
+                    return;
+                }
+            }
+
     };
 
     jClient.register = function(_user, _pass, _location){
@@ -116,7 +123,7 @@ function(io, _, $, MessageHandler, MessageSender, ClientModel) {
         MessageHandler.setup(this.socket);
         console.log("Setting Sender socket.");
         MessageSender.setup(this.socket);
-        
+
         this.runQueue();
     };
 
