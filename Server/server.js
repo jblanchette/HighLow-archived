@@ -5,7 +5,8 @@ MessageHandler = require('./lib/controllers/message/Handler'),
 ChatManager = require('./lib/managers/ChatManager')
 ClientManager = require('./lib/managers/ClientManager'),
 LoginManager = require('./lib/managers/LoginManager'),
-mongoose = require('mongoose');
+mongoose = require('mongoose'),
+UserModel = require('./lib/models/User');
 
 var Server = {
 
@@ -20,11 +21,12 @@ var Server = {
         // Create server owned chat room
         ChatManager.create(-1, "Main Chat");
         console.log("Connecting to MongoDB");
-        
+
         mongoose.connect('mongodb://localhost/test');
 
-
-
+        mongoose.connection.on('open', function (ref) {
+            console.log('Connected to mongo server.');
+        });
 
     },
 

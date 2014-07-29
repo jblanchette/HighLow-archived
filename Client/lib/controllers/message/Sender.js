@@ -9,7 +9,6 @@ define([], function() {
     };
 
     Sender.prototype.emit = function(emitName, emitObject) {
-        console.log("Client Sender.emit: ", emitName, emitObject);
         this.socket.emit(emitName, emitObject);
     };
 

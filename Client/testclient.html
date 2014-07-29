@@ -7,17 +7,25 @@
         <script type="text/javascript" src='config.js'></script>
         <script data-main="app" src="require.js"></script>
 
-         <link rel="stylesheet" href="main.css" type="text/css">
+        <link rel="stylesheet" href="main.css" type="text/css">
 
     </head>
     <body>
         <div id="devtools">
             <div id="controls">
-                <h3>Controls</h3>
-                <input type="button" id="button_connect" value="Connect"> <br>
+                <h3>Controls</h3> <hr>
+                <input type="button" id="button_connect" value="Connect"> <hr>
                 User: <input type="text" id="loginUser" value="test"> <br>
                 Pass: <input type="text" id="loginPass" value="test"> <br>
-                <input type="button" id="button_login" value="Login"> <br>
+                <input type="button" id="button_login" value="Login"> <hr>
+                <input type="button" id="toggle_register" value="Show/Hide Register"><br>
+                <div id="toggle_register_box" style="display: none;">
+                    <h4>Register:</h4>
+                    User: <input type="text" id="registerUser"><br>
+                    Pass: <input type="text" id="registerPass"><br>
+                    Location: <input type="text" id="registerLocation" value="Testville, USA"><br>
+                    <input type="button" id="button_register" value="Register"><br>
+                </div>
             </div>
 
             <div id="status">

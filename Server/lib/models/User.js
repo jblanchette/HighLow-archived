@@ -1,4 +1,5 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+    sha1 = require('sha1');
 
 var Schema = new mongoose.Schema({
     username: {
@@ -10,15 +11,24 @@ var Schema = new mongoose.Schema({
         type: String,
         required: true
     },
+    location: String,
     permissions : String,
     rank : Number
 });
+
+var sPrefix = 'y3a';
+var sSuffix = 'x07';
+
+Schema.methods.comparePassword = function(inputPassword, callback){
+    var result = (this.password === sha1(sPrefix + inputPassword + sSuffix));
+    callback(null, result);
+};
 
 Schema.pre('save', function(next){
     var user = this;
     if (!user.isModified('password')) return next();
 
-    var hash = sha1('y3a' + user.password + 'x07');
+    var hash = sha1(sPrefix + user.password + sSuffix);
     user.password = hash;
     console.log("Next password hash:", hash);
     next();

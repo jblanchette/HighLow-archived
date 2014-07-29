@@ -2,7 +2,7 @@ var _ = require("underscore");
 
 function Handler() {
     this.definitions = {
-        "LOGIN": ["Login", "Logout"],
+        "LOGIN": ["Login", "Logout", "Register"],
         "CHAT": ["Join", "Leave", "Make", "NewMsg", "Func"]
     };
 }
