@@ -14,7 +14,8 @@ var Schema = new mongoose.Schema({
     email: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        validate: [ /\S+@\S+\.\S/, 'Email is not valid' ]
     },
     validated: Boolean,
     location: String,

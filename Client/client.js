@@ -44,9 +44,10 @@ function(io, _, $, MessageHandler, MessageSender, ClientModel) {
         $("#button_register").click(function(){
             var user = $("#registerUser").val();
             var pass = $("#registerPass").val();
+            var email = $("#registerEmail").val();
             var location = $("#registerLocation").val();
 
-            jClient.queue(jClient.register, [user,pass,location]);
+            jClient.queue(jClient.register, [user,pass,email,location]);
 
         });
 
@@ -84,12 +85,13 @@ function(io, _, $, MessageHandler, MessageSender, ClientModel) {
 
     };
 
-    jClient.register = function(_user, _pass, _location){
+    jClient.register = function(_user, _pass, _email, _location){
         console.log("Calling register...");
         var RegisterObject = {
             action: "Register",
             username: _user,
             password: _pass,
+            email: _email,
             location: _location
         };
 

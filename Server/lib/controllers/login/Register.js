@@ -1,4 +1,5 @@
-var MessageSender = require("../message/Sender"),
+var _ = require("underscore"),
+    MessageSender = require("../message/Sender"),
     ClientManager = require("../../managers/ClientManager"),
     UserModel = require("../../models/User");
 
@@ -18,46 +19,47 @@ var MessageSender = require("../message/Sender"),
  */
 
 function Register(socketID, msg) {
+    console.log("Running Register.");
 
-    console.log("Register, socketID:", socketID);
-
-
-    var _type;
-    var _code;
-
-    UserModel.findOne({username: msg.username}, function(err, user){
-        if(err){
-            // Some kind of mongoose error occured.
-            _type = "BAD";
-            _code = 3;
-
-            return; // return from the callback, not the Register func
-        }
-
-        if(!user){
-
-            UserModel.findOne({email: msg.email}, function(err, euser){
-                if(!euser){
-                    _type = "GOOD";
-                    _code = 1;
-                }else{
-                    _type = "BAD";
-                    _code = 4;
-                }
-            });
-
-        }else{
-            _type = "BAD";
-            _code = 2;
-        }
-    });
-
-    var RegisterObj = {
-        type: _type,
-        code: _code
+    var NewUser = {
+        username: msg.username,
+        password: msg.password,
+        email: msg.email,
+        location: msg.location,
+        rank: 1,
+        permissions: 'Default'
     };
 
-    MessageSender.send(socketID, "LOGIN", RegisterObj);
+    UserModel.create(NewUser, function(err, user){
+        var _code, _type, _msg;
+
+        if(err){
+            console.log("Register Error: Error creating user.");
+
+            for(e in err){
+                console.log("Error: ", err[e]);
+            }
+
+            _type = "BAD";
+            _code = 2;
+
+        }else{
+            console.log("Registered new user:", user);
+            _type = "GOOD";
+            _code = 1;
+            _msg = "Success.";
+        }
+
+        var RegisterObj = {
+            action: "Register",
+            type: _type,
+            code: _code,
+            msg: _msg
+        }
+
+        console.log("Sending packet to client:", RegisterObj);
+        MessageSender.emit(socketID, "LOGIN", RegisterObj);
+    });
 
 }
 

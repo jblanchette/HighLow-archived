@@ -21,14 +21,14 @@ var jAdmin = function(input) {
             console.log("Command Syntax: [command] ([argument1] [argument2] [...])");
             console.log("Available Commands:");
             console.log(" - listusers, deleteall");
-        break;
+            break;
         case "listusers":
             UserModel.find({}, function(err, users) {
                 if (err) {
                     console.log("Error:", err);
                 }
 
-                if(!users.length){
+                if (!users.length) {
                     console.log("No users found.");
                 }
 
@@ -36,7 +36,7 @@ var jAdmin = function(input) {
                     console.log(user + "\n");
                 });
             });
-        break;
+            break;
         case "deleteall":
             var query;
             UserModel.find({}, function(err, users) {
@@ -50,6 +50,10 @@ var jAdmin = function(input) {
                     console.log("Removed user:", user.username);
                 });
             });
+            break;
+
+        default:
+            console.log("No Command Found.");
             break;
 
     }

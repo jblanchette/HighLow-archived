@@ -6,7 +6,7 @@ function(require, _) {
         this.definitions = {};
 
         this.ConfigDefinitions = {
-            "LOGIN": ["Login", "Logout"],
+            "LOGIN": ["Login", "Logout", "Register"],
             "CHAT": ["Join", "Leave", "Make", "NewMsg", "Func"]
         };
     }
