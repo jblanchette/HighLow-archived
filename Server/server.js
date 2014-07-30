@@ -6,7 +6,8 @@ ChatManager = require('./lib/managers/ChatManager')
 ClientManager = require('./lib/managers/ClientManager'),
 LoginManager = require('./lib/managers/LoginManager'),
 mongoose = require('mongoose'),
-UserModel = require('./lib/models/User');
+UserModel = require('./lib/models/User'),
+AdminController = require('./lib/controllers/Admin');
 
 var Server = {
 
@@ -26,6 +27,14 @@ var Server = {
 
         mongoose.connection.on('open', function (ref) {
             console.log('Connected to mongo server.');
+
+                    process.stdin.resume();
+                    process.stdin.setEncoding('utf8');
+                    console.log("Admin Input >?");
+        });
+
+        process.stdin.on("data", function(text){
+           AdminController(text);
         });
 
     },

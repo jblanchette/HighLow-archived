@@ -11,6 +11,12 @@ var Schema = new mongoose.Schema({
         type: String,
         required: true
     },
+    email: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    validated: Boolean,
     location: String,
     permissions : String,
     rank : Number
